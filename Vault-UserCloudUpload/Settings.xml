@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  
+  <!-- The comma separated list of Vault properties being attached to the Vault file name/number -->
+  <FileNameSuffixes>Title, Revision</FileNameSuffixes>
+  
+  <!-- The name of the UDP saving the mapped local cloud drive path (Desktop Connector)-->
+  <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
+
+  <!-- The name of the UDP saving the mapped local cloud drive path (Desktop Connector)-->
+  <CloudPath>Cloud Path</CloudPath>
+
+  <!-- Output Path -->
+  <!--<OutputPath>C:\Temp\SD124422\</OutputPath>-->
+
+</settings>
