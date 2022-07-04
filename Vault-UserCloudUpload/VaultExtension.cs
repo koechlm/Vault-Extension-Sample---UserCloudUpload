@@ -30,10 +30,15 @@ namespace VaultUserCloudUpload
             List<CommandSite> mVaultExtensionCmdSites = new List<CommandSite>();
 
             //Describe admin command item
-            CommandItem mAdminOptionsCmd = new CommandItem("Command.VaultUserUploadAdminForm", "Configure User Cloud Upload...")
+            CommandItem mAdminOptionsCmd = new CommandItem("Command.VaultUserUploadAdminForm", "Configure User Cloud Upload...");
+            if (mIsDarkTheme)
             {
-                Image = Properties.Resources.AdminOptionsImage_16_light
-            };
+                mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_dark;
+            }
+            else
+            {
+                mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_light;
+            }
             mAdminOptionsCmd.Execute += mAdminCmd_Execute;
 
             //Deploy command site
@@ -50,26 +55,26 @@ namespace VaultUserCloudUpload
             mUploadToCloudProjectCmd.NavigationTypes = new SelectionTypeId[] { SelectionTypeId.File };
             mUploadToCloudProjectCmd.MultiSelectEnabled = true;
             mUploadToCloudProjectCmd.Hint = "Uploads selected file(s) to the corresponding or configured cloud project";
-            if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Light)
+            if (mIsDarkTheme)
             {
-                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_light;
+                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_dark;
             }
             else
             {
-                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_dark;
+                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_light;
             }
 
             CommandItem mUploadToCloudCmd = new CommandItem("Command.UploadToCloud", "Upload to ...");
             mUploadToCloudCmd.NavigationTypes = new SelectionTypeId[] { SelectionTypeId.File };
             mUploadToCloudCmd.MultiSelectEnabled = true;
             mUploadToCloudCmd.Hint = "Select Cloud Drive and upload selected file(s)";
-            if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Light)
+            if (mIsDarkTheme)
             {
-                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_light;
+                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_dark;
             }
             else
             {
-                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_dark;
+                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_light;
             }
 
             //deploy command site for the file context commands
@@ -96,17 +101,16 @@ namespace VaultUserCloudUpload
             {
                 mConfigPerm = true;
                 VaultUserCloudUploadAdminForm mAdminWindow = new VaultUserCloudUploadAdminForm();
-
-                if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Light)
-                {
-                    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.LightThemeName);
-                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
-                }
-                if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Dark)
+                if (mIsDarkTheme)
                 {
                     //Autodesk.iLogic.ThemeSkins.CustomThemeSkins.Register();
                     mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.DarkThemeName);
                     mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_dark;
+                }
+                else
+                {
+                    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.LightThemeName);
+                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
                 }
                 if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Default)
                 {
@@ -154,6 +158,7 @@ namespace VaultUserCloudUpload
         public void OnLogOn(IApplication application)
         {
             mConnection = application.Connection;
+            mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
         }
 
         public void OnShutdown(IApplication application)
