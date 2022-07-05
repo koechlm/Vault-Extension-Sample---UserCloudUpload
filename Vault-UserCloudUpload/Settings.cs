@@ -24,6 +24,9 @@ namespace VaultUserCloudUpload
         [XmlElement("FileNameSuffixes")]
         public string FileNameSuffixies;
 
+        [XmlElement("VaultFolderCat")]
+        public string VaultFolderCat;
+
         [XmlElement("CloudDrivePath")]
         public string CloudDrivePath;
 

@@ -25,6 +25,7 @@ namespace VaultUserCloudUpload
         {
             InitializeComponent();
 
+            dtGrdUploadFiles.DataSource = null;
 
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
@@ -48,8 +49,6 @@ namespace VaultUserCloudUpload
             ACW.PropInst[] mAllFilesPropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FILE", mFileIterationIds.ToArray());
 
             List<ACW.File> mFilesToUpload = new List<ACW.File>();
-
-
             mFilesToUpload = mFiles.ToList<ACW.File>();
 
             foreach (ACW.File file in mFilesToUpload)
@@ -60,6 +59,31 @@ namespace VaultUserCloudUpload
                 string mFileExt = '.' + file.VerName.Split('.').Last();
                 string mFileName = file.VerName.Replace(mFileExt, "");
                 string mUploadFileName = mFileName + "--" + mSuffix1 + "--" + mSuffix2 + mFileExt;
+
+                //get and validate the parent projects cloud project path mapping
+                ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(file.FolderId);
+                bool mCatFound = false;
+                if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                {
+                    mCatFound = true;
+                }
+                else
+                {
+                    if (mFolder.FullName != "$/")
+                    {
+                        do
+                        {
+                            mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(mFolder.ParId);
+                            if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                            {
+                                mCatFound = true;
+                            }
+                        } while (mCatFound == false || mFolder.FullName == "$/");
+                    }
+                }
+
+                ACW.PropInst[] mAllFldrPropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { mFolder.Id });
+
 
                 dtGrdUploadFiles.Rows.Add(mValid, mUploadFileName, file.FolderId);
             }

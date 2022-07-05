@@ -4,6 +4,9 @@
   <!-- The comma separated list of Vault properties being attached to the Vault file name/number -->
   <FileNameSuffixes>Title, Revision</FileNameSuffixes>
   
+  <!-- Folder Category Name of folders to be mapped as corresponding Vault project to Cloud proejct-->
+  <VaultFolderCat>Project</VaultFolderCat>
+  
   <!-- The name of the UDP saving the mapped local cloud drive path (Desktop Connector)-->
   <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
 
