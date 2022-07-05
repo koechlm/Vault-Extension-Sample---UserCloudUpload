@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,9 +10,9 @@ using System.Windows.Forms;
 
 namespace VaultUserCloudUpload
 {
-    public partial class VaultUserCloudUploadAdminForm : DevExpress.XtraEditors.XtraForm
+    public partial class AdminOptions : Form
     {
-        public VaultUserCloudUploadAdminForm()
+        public AdminOptions()
         {
             InitializeComponent();
         }

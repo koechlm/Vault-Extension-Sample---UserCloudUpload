@@ -11,7 +11,7 @@ using VDF = Autodesk.DataManagement.Client.Framework;
 using Autodesk.Connectivity.Explorer.Extensibility;
 using Autodesk.Connectivity.Extensibility.Framework;
 
-[assembly: ApiVersion("16.0")]
+[assembly: ApiVersion("15.0")]
 [assembly: ExtensionId("6b8d6d58-b035-49ce-95d7-abdebb0404e1")]
 
 namespace VaultUserCloudUpload
@@ -22,7 +22,10 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         public static bool mConfigPerm = false;
         public static bool mSettingsChanged = false;
-        public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
+        public List<ACW.File> mFilesToUpload = new List<ACW.File>();
+        public List<long> mFileIds = new List<long>();
+
+        //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
 
         IEnumerable<CommandSite> IExplorerExtension.CommandSites()
@@ -31,14 +34,14 @@ namespace VaultUserCloudUpload
 
             //Describe admin command item
             CommandItem mAdminOptionsCmd = new CommandItem("Command.VaultUserUploadAdminForm", "Configure User Cloud Upload...");
-            if (mIsDarkTheme)
-            {
-                mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_dark;
-            }
-            else
-            {
-                mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_light;
-            }
+            //if (mIsDarkTheme)
+            //{
+            //    mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_dark;
+            //}
+            //else
+            //{
+            mAdminOptionsCmd.Image = Properties.Resources.AdminOptionsImage_16_light;
+            //}
             mAdminOptionsCmd.Execute += mAdminCmd_Execute;
 
             //Deploy command site
@@ -55,27 +58,29 @@ namespace VaultUserCloudUpload
             mUploadToCloudProjectCmd.NavigationTypes = new SelectionTypeId[] { SelectionTypeId.File };
             mUploadToCloudProjectCmd.MultiSelectEnabled = true;
             mUploadToCloudProjectCmd.Hint = "Uploads selected file(s) to the corresponding or configured cloud project";
-            if (mIsDarkTheme)
-            {
-                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_dark;
-            }
-            else
-            {
-                mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_light;
-            }
+            mUploadToCloudProjectCmd.Execute += mUploadToCloudProjectCmd_Execute;
+            //if (mIsDarkTheme)
+            //{
+            //    mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_dark;
+            //}
+            //else
+            //{
+            mUploadToCloudProjectCmd.Image = Properties.Resources.cmdPush_16_light;
+            //}
 
             CommandItem mUploadToCloudCmd = new CommandItem("Command.UploadToCloud", "Upload to ...");
             mUploadToCloudCmd.NavigationTypes = new SelectionTypeId[] { SelectionTypeId.File };
             mUploadToCloudCmd.MultiSelectEnabled = true;
             mUploadToCloudCmd.Hint = "Select Cloud Drive and upload selected file(s)";
-            if (mIsDarkTheme)
-            {
-                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_dark;
-            }
-            else
-            {
-                mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_light;
-            }
+            mUploadToCloudCmd.Execute += mUploadToCloudCmd_Execute;
+            //if (mIsDarkTheme)
+            //{
+            //    mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_dark;
+            //}
+            //else
+            //{
+            mUploadToCloudCmd.Image = Properties.Resources.GlobalFolderView_16_light;
+            //}
 
             //deploy command site for the file context commands
             CommandSite mUploadToCloudCmdSite = new CommandSite("Menu.FileContextMenu", "Upload to Cloud");
@@ -89,6 +94,34 @@ namespace VaultUserCloudUpload
             return mVaultExtensionCmdSites;
         }
 
+        private void mUploadToCloudProjectCmd_Execute(object sender, CommandItemEventArgs e)
+        {
+            //get the selected files from Context.CurrentSelectionSet
+            foreach (ISelection entity in e.Context.CurrentSelectionSet)
+            {
+                mFileIds.Add(entity.Id);
+            }
+
+            //get the dialog to prepare its content
+            UploadPreview mUploadPreview = new UploadPreview(mFileIds);
+
+            DialogResult dialogResult = mUploadPreview.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+
+            }
+        }
+
+        private void mUploadToCloudCmd_Execute(object sender, CommandItemEventArgs e)
+        {
+            SelectProjects mSelectProjects = new SelectProjects();
+            DialogResult dialogResult = mSelectProjects.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                mUploadToCloudProjectCmd_Execute(sender, e);
+            }
+        }
+
         private void mAdminCmd_Execute(object sender, CommandItemEventArgs e)
         {
             Autodesk.Connectivity.WebServices.Permis[] mAllPermisObjects = e.Context.Application.Connection.WebServiceManager.AdminService.GetPermissionsByUserId(e.Context.Application.Connection.UserID);
@@ -100,34 +133,35 @@ namespace VaultUserCloudUpload
             if (mAllPermissions.Contains(76) && mAllPermissions.Contains(77)) //76 = Vault Set Options; 77 = Vault Get Options
             {
                 mConfigPerm = true;
-                VaultUserCloudUploadAdminForm mAdminWindow = new VaultUserCloudUploadAdminForm();
-                if (mIsDarkTheme)
-                {
-                    //Autodesk.iLogic.ThemeSkins.CustomThemeSkins.Register();
-                    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.DarkThemeName);
-                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_dark;
-                }
-                else
-                {
-                    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.LightThemeName);
-                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
-                }
-                if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Default)
-                {
-                    mAdminWindow.LookAndFeel.SetOffice2003Style();
-                }
+                AdminOptions mAdminWindow = new AdminOptions();
+                //if (mIsDarkTheme)
+                //{
+                //    //Autodesk.iLogic.ThemeSkins.CustomThemeSkins.Register();
+                //    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.DarkThemeName);
+                //    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_dark;
+                //}
+                //else
+                //{
+                //    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.LightThemeName);
+                //mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
+                //}
+                //if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Default)
+                //{
+                //    mAdminWindow.LookAndFeel.SetOffice2003Style();
+                //}
 
                 mAdminWindow.ShowDialog();
             }
             else
             {
-                VDF.Currency.Restriction mAdminRestriction = new VDF.Currency.Restriction("Vault User-Cloud-Upload Administration Options", "Access denied", "Accessing Administration Options requires the permissions 'Vault Get Options' and 'Vault Set Options'");
-                VDF.Forms.Settings.ShowRestrictionsSettings showRestrictionsSettings = new VDF.Forms.Settings.ShowRestrictionsSettings("Vault User-Cloud-Upload Administration Options", VDF.Forms.Settings.ShowRestrictionsSettings.IconType.Error);
+                //VDF.Currency.Restriction mAdminRestriction = new VDF.Currency.Restriction("Vault User-Cloud-Upload Administration Options", "Access denied", "Accessing Administration Options requires the permissions 'Vault Get Options' and 'Vault Set Options'");
+                VDF.Currency.Restriction mAdminRestriction = new VDF.Currency.Restriction("Administration Options", "Access is limited to Configuration Administrators");
+                VDF.Forms.Settings.ShowRestrictionsSettings showRestrictionsSettings = new VDF.Forms.Settings.ShowRestrictionsSettings("Vault User-Cloud-Upload", VDF.Forms.Settings.ShowRestrictionsSettings.IconType.Error);
                 showRestrictionsSettings.AddRestriction(mAdminRestriction);
                 showRestrictionsSettings.ShowDetailsArea = true;
                 showRestrictionsSettings.RestrictionColumnCaption = "Restriction";
                 showRestrictionsSettings.RestrictedObjectNameColumnCaption = "Object";
-                showRestrictionsSettings.ReasonColumnCaption = "Restriction Reason";
+                //showRestrictionsSettings.ReasonColumnCaption = "Restriction Reason";
 
                 DialogResult result = VDF.Forms.Library.ShowRestrictions(showRestrictionsSettings);
             }
@@ -158,7 +192,7 @@ namespace VaultUserCloudUpload
         public void OnLogOn(IApplication application)
         {
             mConnection = application.Connection;
-            mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
+            //mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
         }
 
         public void OnShutdown(IApplication application)
