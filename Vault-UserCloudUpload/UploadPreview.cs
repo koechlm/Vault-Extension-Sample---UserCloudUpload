@@ -27,7 +27,7 @@ namespace VaultUserCloudUpload
 
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
-            string mNameSuffix1 = mSettings.FileNameSuffixies.Split(',').First();
+            string mNameSuffix1 = mSettings.FileNameSuffixies.Split(',').First().TrimEnd();
             string mNameSuffix2 = mSettings.FileNameSuffixies.Split(',').Last().TrimStart();
 
             //Get the property definitions for FILE and FLDR
@@ -124,9 +124,24 @@ namespace VaultUserCloudUpload
                     //try to find a corresponding mapped drive project name
                     if (mValidPath != true)
                     {
-                        //try to find an corresponding (Vault project name == cloud project name) download folder
-                        mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mProjectFldr.Name;
-                        mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                        List<string> mEnabledDrives = mSettings.DriveTypes.Split(',').ToList();
+                        foreach (string item in mEnabledDrives)
+                        {
+                            item.TrimEnd().TrimStart();
+                        }
+
+                        //try to find an corresponding (Vault project name == cloud project name) download folder on ADocs or Fusion Team
+                        if (mEnabledDrives.Contains("Drive"))
+                        {
+                            mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs\\" + mProjectFldr.Name + "\\Project Files";
+                            mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                        }
+                        if (mValidPath != true && mEnabledDrives.Contains("Fusion"))
+                        {
+                            mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion\\" + mProjectFldr.Name;
+                            mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                        }
+                        //finally
                         if (mValidPath != true)
                         {
                             mCldDrvPath = "";
