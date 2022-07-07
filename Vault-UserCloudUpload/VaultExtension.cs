@@ -22,9 +22,7 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         public static bool mConfigPerm = false;
         public static bool mSettingsChanged = false;
-        public List<ACW.File> mFilesToUpload = new List<ACW.File>();
-        public List<long> mFileIds = new List<long>();
-
+        //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
         //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
 
@@ -96,20 +94,50 @@ namespace VaultUserCloudUpload
 
         private void mUploadToCloudProjectCmd_Execute(object sender, CommandItemEventArgs e)
         {
-            //get the selected files from Context.CurrentSelectionSet
+            //id collection of files to process
+            List<long> mFileIds = new List<long>();
+
+            //define download settings as a default for all files
+            VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings = CreateAcquireSettings();
+
+            //get the file ids from the user's selection
             foreach (ISelection entity in e.Context.CurrentSelectionSet)
             {
                 mFileIds.Add(entity.Id);
             }
 
             //get the dialog to prepare its content
-            UploadPreview mUploadPreview = new UploadPreview(mFileIds);
+            UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireSettings);
 
             DialogResult dialogResult = mUploadPreview.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-
+                //download validated files iterating the AcquirePackage
+                VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mAcquireSettings);
             }
+
+            mUploadPreview.Dispose();
+            
+        }
+
+
+        private VDF.Vault.Settings.AcquireFilesSettings CreateAcquireSettings()
+        {
+            VDF.Vault.Settings.AcquireFilesSettings settings = new VDF.Vault.Settings.AcquireFilesSettings(mConnection);
+            settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout;
+            settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeChildren = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseChildren = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeAttachments = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeLibraryContents = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.ReleaseBiased = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.VersionGatheringOption = VDF.Vault.Currency.VersionGatheringOption.Revision;
+            settings.OptionsRelationshipGathering.IncludeLinksSettings.IncludeLinks = false;
+            VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions mResOpt = new VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions();
+            mResOpt.OverwriteOption = VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions.OverwriteOptions.ForceOverwriteAll;
+            mResOpt.SyncWithRemoteSiteSetting = VDF.Vault.Settings.AcquireFilesSettings.SyncWithRemoteSite.Always;
+
+            return settings;
         }
 
         private void mUploadToCloudCmd_Execute(object sender, CommandItemEventArgs e)

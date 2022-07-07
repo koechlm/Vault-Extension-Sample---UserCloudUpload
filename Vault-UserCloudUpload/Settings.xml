@@ -10,10 +10,7 @@
   <!-- The name of the UDP saving the mapped local cloud drive path (Desktop Connector)-->
   <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
 
-  <!-- The name of the UDP saving the mapped local cloud drive path (Desktop Connector)-->
+  <!-- The name of the UDP saving online projects URL-->
   <CloudPath>Cloud Path</CloudPath>
-
-  <!-- Output Path -->
-  <!--<OutputPath>C:\Temp\SD124422\</OutputPath>-->
 
 </settings>
