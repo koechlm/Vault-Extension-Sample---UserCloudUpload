@@ -32,12 +32,12 @@ namespace VaultUserCloudUpload
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UploadPreview));
             this.dtGrdUploadFiles = new System.Windows.Forms.DataGridView();
-            this.btnUpload = new System.Windows.Forms.Button();
-            this.btnUploadCancel = new System.Windows.Forms.Button();
             this.Upload = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.UploadFilename = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProjectPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ErrorText = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnUpload = new System.Windows.Forms.Button();
+            this.btnUploadCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dtGrdUploadFiles)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,35 +60,8 @@ namespace VaultUserCloudUpload
             this.dtGrdUploadFiles.ReadOnly = true;
             this.dtGrdUploadFiles.Size = new System.Drawing.Size(881, 359);
             this.dtGrdUploadFiles.TabIndex = 0;
-            // 
-            // btnUpload
-            // 
-            this.btnUpload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpload.AutoSize = true;
-            this.btnUpload.Enabled = false;
-            this.btnUpload.Image = global::VaultUserCloudUpload.Properties.Resources.cmdPush_16_light;
-            this.btnUpload.Location = new System.Drawing.Point(776, 365);
-            this.btnUpload.Name = "btnUpload";
-            this.btnUpload.Padding = new System.Windows.Forms.Padding(5);
-            this.btnUpload.Size = new System.Drawing.Size(93, 33);
-            this.btnUpload.TabIndex = 1;
-            this.btnUpload.Text = "Upload";
-            this.btnUpload.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnUpload.UseVisualStyleBackColor = true;
-            this.btnUpload.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnUpload_MouseClick);
-            // 
-            // btnUploadCancel
-            // 
-            this.btnUploadCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUploadCancel.AutoSize = true;
-            this.btnUploadCancel.Location = new System.Drawing.Point(710, 365);
-            this.btnUploadCancel.Name = "btnUploadCancel";
-            this.btnUploadCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnUploadCancel.Size = new System.Drawing.Size(60, 33);
-            this.btnUploadCancel.TabIndex = 2;
-            this.btnUploadCancel.Text = "Cancel";
-            this.btnUploadCancel.UseVisualStyleBackColor = true;
-            this.btnUploadCancel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnUploadCancel_MouseClick);
+            this.dtGrdUploadFiles.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dtGrdUploadFiles_RowsAdded);
+            this.dtGrdUploadFiles.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dtGrdUploadFiles_UserDeletedRow);
             // 
             // Upload
             // 
@@ -135,6 +108,35 @@ namespace VaultUserCloudUpload
             this.ErrorText.HeaderText = "Upload Restriction";
             this.ErrorText.Name = "ErrorText";
             this.ErrorText.ReadOnly = true;
+            // 
+            // btnUpload
+            // 
+            this.btnUpload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpload.AutoSize = true;
+            this.btnUpload.Enabled = false;
+            this.btnUpload.Image = global::VaultUserCloudUpload.Properties.Resources.cmdPush_16_light;
+            this.btnUpload.Location = new System.Drawing.Point(776, 365);
+            this.btnUpload.Name = "btnUpload";
+            this.btnUpload.Padding = new System.Windows.Forms.Padding(5);
+            this.btnUpload.Size = new System.Drawing.Size(93, 33);
+            this.btnUpload.TabIndex = 1;
+            this.btnUpload.Text = "Upload";
+            this.btnUpload.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnUpload.UseVisualStyleBackColor = true;
+            this.btnUpload.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnUpload_MouseClick);
+            // 
+            // btnUploadCancel
+            // 
+            this.btnUploadCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUploadCancel.AutoSize = true;
+            this.btnUploadCancel.Location = new System.Drawing.Point(710, 365);
+            this.btnUploadCancel.Name = "btnUploadCancel";
+            this.btnUploadCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnUploadCancel.Size = new System.Drawing.Size(60, 33);
+            this.btnUploadCancel.TabIndex = 2;
+            this.btnUploadCancel.Text = "Cancel";
+            this.btnUploadCancel.UseVisualStyleBackColor = true;
+            this.btnUploadCancel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnUploadCancel_MouseClick);
             // 
             // UploadPreview
             // 

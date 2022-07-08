@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ACW = Autodesk.Connectivity.WebServices;
@@ -21,7 +22,7 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
 
-        public UploadPreview(List<long> mFileIds, ref VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings)
+        public UploadPreview(List<long> mFileIds, ref VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings, List<string> mUserSelectedProjects = null)
         {
             InitializeComponent();
 
@@ -52,7 +53,6 @@ namespace VaultUserCloudUpload
             {
                 //preset error handling for each file
                 bool mValidPath = false;
-                bool mValidFileName = true;
 
                 //get the property instances of the individual file
                 IEnumerable<ACW.PropInst> mFilePropInsts = mAllFilesPropInsts.Where(n => n.EntityId == file.Id);
@@ -65,103 +65,133 @@ namespace VaultUserCloudUpload
                 var temp1 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId1).FirstOrDefault().Val;
                 if (temp1 is null)
                 {
-                    mSuffix1 = String.Format("[{0}]", mNameSuffix1);
-                    mValidFileName = false;
-                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
+                    mSuffix1 = String.Format("[<{0}>]", mNameSuffix1);
+                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[<>]'.";
                 }
                 else
                 {
                     mSuffix1 = temp1.ToString();
+                    //remove characters not allowed for filenames
+                    mSuffix1 = String.Format("[{0}]", Regex.Replace(mSuffix1, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
+
                 }
                 var temp2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault().Val;
                 if (temp2 is null)
                 {
-                    mSuffix2 = String.Format("[{0}]", mNameSuffix2);
-                    mValidFileName = false;
-                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
+                    mSuffix2 = String.Format("[<{0}>]", mNameSuffix2);
+                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[<>]'.";
                 }
                 else
                 {
                     mSuffix2 = temp2.ToString();
+                    //remove characters not allowed for filenames
+                    mSuffix2 = String.Format("[{0}]", Regex.Replace(mSuffix2, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
                 }
                 string mFileExt = '.' + file.VerName.Split('.').Last();
                 string mFileName = file.VerName.Replace(mFileExt, "");
                 string mUploadFileName = mFileName + "--" + mSuffix1 + "--" + mSuffix2 + mFileExt;
 
-                //get and validate the parent projects cloud project path mapping
-                ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(file.FolderId);
-                ACW.Folder mProjectFldr = null;
+                //differentiate user selected projects vs. configured/corresponding projects
                 string mCldDrvPath = null;
-
-                if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                if (mUserSelectedProjects != null)
                 {
-                    mProjectFldr = mFolder;
-                }
-                else
-                {
-                    if (mFolder.FullName != "$/")
+                    //add the individual file to each validated project path
+                    foreach (string mPath in mUserSelectedProjects)
                     {
-                        do
-                        {
-                            mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(mFolder.ParId);
-                            if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
-                            {
-                                mProjectFldr = mFolder;
-                            }
-                        } while (mProjectFldr != null && mFolder.FullName == "$");
-                    }
-                }
-
-                if (mProjectFldr != null)
-                {
-                    ACW.PropInst[] mFldrPropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { mProjectFldr.Id });
-                    long mCldDrvPropId = mFolderPropDefs.Where(n => n.DispName == mSettings.CloudDrivePath).FirstOrDefault().Id;
-
-                    mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mFldrPropInsts.Where(n => n.PropDefId == mCldDrvPropId).FirstOrDefault().Val.ToString();
-                    mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
-                    btnUpload.Enabled = true;
-
-                    //try to find a corresponding mapped drive project name
-                    if (mValidPath != true)
-                    {
-                        List<string> mEnabledDrives = mSettings.DriveTypes.Split(',').ToList();
-                        foreach (string item in mEnabledDrives)
-                        {
-                            item.TrimEnd().TrimStart();
-                        }
-
-                        //try to find an corresponding (Vault project name == cloud project name) download folder on ADocs or Fusion Team
-                        if (mEnabledDrives.Contains("Drive"))
-                        {
-                            mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs\\" + mProjectFldr.Name + "\\Project Files";
-                            mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
-                        }
-                        if (mValidPath != true && mEnabledDrives.Contains("Fusion"))
-                        {
-                            mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion\\" + mProjectFldr.Name;
-                            mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
-                        }
-                        //finally
+                        mValidPath = (new System.IO.DirectoryInfo(mPath)).Exists;
                         if (mValidPath != true)
                         {
                             mCldDrvPath = "";
                             mRestrictionText = "Could not find corresponding or registered cloud project";
                         }
+                        else
+                        {
+                            mCldDrvPath = mPath;
+                            btnUpload.Enabled = true;
+                            //add the individual file and its target download path to the AcquisitionOptions
+                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
+                            VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
+                            mAcquireSettings.AddFileToAcquire(mFileIt, mAcquireSettings.DefaultAcquisitionOption, mLocalPath);
+                        }
+                    }
+                }
+                else
+                {
+                    //get and validate the parent projects cloud project path mapping
+                    ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(file.FolderId);
+                    ACW.Folder mProjectFldr = null;
+
+                    if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                    {
+                        mProjectFldr = mFolder;
                     }
                     else
                     {
-                        //add the individual file and its target download path to the AcquisitionOptions
-                        VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
-                        VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                        mAcquireSettings.AddFileToAcquire(mFileIt, mAcquireSettings.DefaultAcquisitionOption, mLocalPath);
+                        if (mFolder.FullName != "$/")
+                        {
+                            do
+                            {
+                                mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(mFolder.ParId);
+                                if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                                {
+                                    mProjectFldr = mFolder;
+                                }
+                            } while (mProjectFldr != null && mFolder.FullName == "$");
+                        }
                     }
 
-                }
-                else //neither configured nor corresponding project found; file will not download - set an error on this row below
-                {
-                    mCldDrvPath = "";
-                    mRestrictionText = "Could not find corresponding or registered cloud project";
-                }
+                    if (mProjectFldr != null)
+                    {
+                        ACW.PropInst[] mFldrPropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { mProjectFldr.Id });
+                        long mCldDrvPropId = mFolderPropDefs.Where(n => n.DispName == mSettings.CloudDrivePath).FirstOrDefault().Id;
+
+                        mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mFldrPropInsts.Where(n => n.PropDefId == mCldDrvPropId).FirstOrDefault().Val.ToString();
+                        mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                        btnUpload.Enabled = true;
+
+                        //try to find a corresponding mapped drive project name
+                        if (mValidPath != true)
+                        {
+                            List<string> mEnabledDrives = mSettings.DriveTypes.Split(',').ToList();
+                            foreach (string item in mEnabledDrives)
+                            {
+                                item.TrimEnd().TrimStart();
+                            }
+
+                            //try to find an corresponding (Vault project name == cloud project name) download folder on ADocs or Fusion Team
+                            if (mEnabledDrives.Contains("Drive"))
+                            {
+                                mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs\\" + mProjectFldr.Name + "\\Project Files";
+                                mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                            }
+                            if (mValidPath != true && mEnabledDrives.Contains("Fusion"))
+                            {
+                                mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion\\" + mProjectFldr.Name;
+                                mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                            }
+                            //finally
+                            if (mValidPath != true)
+                            {
+                                mCldDrvPath = "";
+                                mRestrictionText = "Could not find corresponding or registered cloud project";
+                            }
+                        }
+                        else
+                        {
+                            //add the individual file and its target download path to the AcquisitionOptions
+                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
+                            VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
+                            mAcquireSettings.AddFileToAcquire(mFileIt, mAcquireSettings.DefaultAcquisitionOption, mLocalPath);
+                        }
+
+                    }
+                    else //neither configured nor corresponding project found; file will not download - set an error on this row below
+                    {
+                        mCldDrvPath = "";
+                        mRestrictionText = "Could not find corresponding or registered cloud project";
+                    }
+                } //configured or corresponding projects
+
 
                 //add the files to the preview list and mark an error if the target path or filename is not validated successfully
                 if (mValidPath == false)
@@ -192,6 +222,19 @@ namespace VaultUserCloudUpload
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void dtGrdUploadFiles_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            if (dtGrdUploadFiles.Rows.Count == 0)
+            {
+                btnUpload.Enabled = false;
+            }
+        }
+
+        private void dtGrdUploadFiles_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            btnUpload.Enabled = true;
         }
     }
 }

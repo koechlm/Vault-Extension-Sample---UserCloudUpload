@@ -22,12 +22,11 @@ namespace VaultUserCloudUpload
 
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
+        public List<string> mProjects = new List<string>();
 
         public SelectProjects()
         {
             InitializeComponent();
-
-            //initialize and fill the tree view
 
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
@@ -37,18 +36,8 @@ namespace VaultUserCloudUpload
                 item.Replace(" ", "");
             }
 
-
-
-
-
         }
 
-
-        private void btnContinue_MouseClick(object sender, MouseEventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
 
         private void btnRuleDirAdd_Click(object sender, EventArgs e)
         {
@@ -64,6 +53,7 @@ namespace VaultUserCloudUpload
                 mDriveIcon = imageList1.Images[0];
                 mProjectName = "Autodesk Drive / " + folderBrowserDialog1.SelectedPath.Split('\\')[5];
                 dataGridView1.Rows.Add(mDriveIcon, mProjectName, folderBrowserDialog1.SelectedPath);
+                mProjects.Add(folderBrowserDialog1.SelectedPath);
             }
             else
             {
@@ -76,6 +66,7 @@ namespace VaultUserCloudUpload
                 mDriveIcon = imageList1.Images[1];
                 mProjectName = folderBrowserDialog1.SelectedPath.Split('\\')[4] + " / " + folderBrowserDialog1.SelectedPath.Split('\\')[5];
                 dataGridView1.Rows.Add(mDriveIcon, mProjectName, folderBrowserDialog1.SelectedPath);
+                mProjects.Add(folderBrowserDialog1.SelectedPath);
             }
             else
             {
@@ -88,12 +79,12 @@ namespace VaultUserCloudUpload
                 mDriveIcon = imageList1.Images[2];
                 mProjectName = folderBrowserDialog1.SelectedPath.Split('\\')[4] + " / " + folderBrowserDialog1.SelectedPath.Split('\\')[5];
                 dataGridView1.Rows.Add(mDriveIcon, mProjectName, folderBrowserDialog1.SelectedPath);
+                mProjects.Add(folderBrowserDialog1.SelectedPath);
             }
             else
             {
                 //Restriction Dialog - inform about valid selections Drive, Autodesk Docs and Fusion
             }
-
 
             folderBrowserDialog1.Dispose();
 
@@ -108,6 +99,12 @@ namespace VaultUserCloudUpload
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+        private void btnContinue_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
     }

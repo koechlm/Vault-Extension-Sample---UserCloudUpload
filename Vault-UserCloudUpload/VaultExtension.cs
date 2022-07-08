@@ -117,7 +117,7 @@ namespace VaultUserCloudUpload
             }
 
             mUploadPreview.Dispose();
-            
+
         }
 
 
@@ -142,11 +142,37 @@ namespace VaultUserCloudUpload
 
         private void mUploadToCloudCmd_Execute(object sender, CommandItemEventArgs e)
         {
-            SelectProjects mSelectProjects = new SelectProjects();
-            DialogResult dialogResult = mSelectProjects.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            //id collection of files to process
+            List<long> mFileIds = new List<long>();
+
+            //define download settings as a default for all files
+            VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings = CreateAcquireSettings();
+
+            //get the file ids from the user's selection
+            foreach (ISelection entity in e.Context.CurrentSelectionSet)
             {
-                mUploadToCloudProjectCmd_Execute(sender, e);
+                mFileIds.Add(entity.Id);
+            }
+
+            //get the dialog to select target projects for the upload
+            List<String> mUserSelectedProjects = new List<string>();
+            SelectProjects mSelectProjects = new SelectProjects();
+            DialogResult mSelectProjectsResult = mSelectProjects.ShowDialog();
+
+            if (mSelectProjectsResult == DialogResult.OK)
+            {
+                mUserSelectedProjects = mSelectProjects.mProjects;
+                //get the dialog to prepare its content
+                UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireSettings, mUserSelectedProjects);
+
+                DialogResult dialogResult = mUploadPreview.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    //download validated files iterating the AcquirePackage
+                    VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mAcquireSettings);
+                }
+
+                mUploadPreview.Dispose();
             }
         }
 
