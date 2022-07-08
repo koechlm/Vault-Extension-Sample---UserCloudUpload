@@ -92,6 +92,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -157,9 +158,13 @@
     <None Include="Resources\Sites_32_light.png" />
     <None Include="Resources\AppMngr_16x16_light.png" />
     <None Include="Resources\AppMngr_32x32_light.png" />
+    <Content Include="Resources\Add_Generic_16.png" />
     <Content Include="Resources\AdminOptionsImage_16_dark.png" />
     <Content Include="Resources\AppMngr_16x16_dark.png" />
     <Content Include="Resources\AppMngr_32x32_dark.png" />
+    <Content Include="Resources\autodesk-docs-small-badge-16.png" />
+    <Content Include="Resources\autodesk-drive-small-badge-16.png" />
+    <Content Include="Resources\autodesk-fusion-team-small-badge-16.png" />
     <Content Include="Resources\CheckIn_16_dark.png" />
     <Content Include="Resources\CheckIn_32_dark.png" />
     <Content Include="Resources\CheckOut_16_dark.png" />

@@ -27,7 +27,7 @@ namespace VaultUserCloudUpload
 
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
-            string mNameSuffix1 = mSettings.FileNameSuffixies.Split(',').First().TrimEnd();
+            string mNameSuffix1 = mSettings.FileNameSuffixies.Split(',').FirstOrDefault().TrimEnd();
             string mNameSuffix2 = mSettings.FileNameSuffixies.Split(',').Last().TrimStart();
 
             //Get the property definitions for FILE and FLDR
@@ -115,9 +115,9 @@ namespace VaultUserCloudUpload
                 if (mProjectFldr != null)
                 {
                     ACW.PropInst[] mFldrPropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { mProjectFldr.Id });
-                    long mCldDrvPropId = mFolderPropDefs.Where(n => n.DispName == mSettings.CloudDrivePath).First().Id;
+                    long mCldDrvPropId = mFolderPropDefs.Where(n => n.DispName == mSettings.CloudDrivePath).FirstOrDefault().Id;
 
-                    mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mFldrPropInsts.Where(n => n.PropDefId == mCldDrvPropId).First().Val.ToString();
+                    mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mFldrPropInsts.Where(n => n.PropDefId == mCldDrvPropId).FirstOrDefault().Val.ToString();
                     mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
                     btnUpload.Enabled = true;
 

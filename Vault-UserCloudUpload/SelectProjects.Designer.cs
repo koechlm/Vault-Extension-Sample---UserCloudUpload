@@ -29,43 +29,34 @@ namespace VaultUserCloudUpload
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Autodesk Drive");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Autodesk Docs");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Autodesk Fusion Team");
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectProjects));
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnContinue = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.btnRuleDirAdd = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.clmIcon = new System.Windows.Forms.DataGridViewImageColumn();
+            this.clmType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
-            // treeView1
+            // imageList1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView1.Location = new System.Drawing.Point(13, 13);
-            this.treeView1.Name = "treeView1";
-            treeNode1.Name = "ADrive";
-            treeNode1.Text = "Autodesk Drive";
-            treeNode2.Checked = true;
-            treeNode2.Name = "ACCDocs";
-            treeNode2.Text = "Autodesk Docs";
-            treeNode3.Name = "Fusion";
-            treeNode3.Text = "Autodesk Fusion Team";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
-            this.treeView1.ShowNodeToolTips = true;
-            this.treeView1.Size = new System.Drawing.Size(287, 396);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseClick);
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "autodesk-drive-small-badge-16.png");
+            this.imageList1.Images.SetKeyName(1, "autodesk-docs-small-badge-16.png");
+            this.imageList1.Images.SetKeyName(2, "autodesk-fusion-team-small-badge-16.png");
             // 
             // btnContinue
             // 
             this.btnContinue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnContinue.Enabled = false;
-            this.btnContinue.Location = new System.Drawing.Point(224, 415);
+            this.btnContinue.Location = new System.Drawing.Point(578, 216);
             this.btnContinue.Name = "btnContinue";
             this.btnContinue.Size = new System.Drawing.Size(75, 23);
             this.btnContinue.TabIndex = 1;
@@ -75,32 +66,103 @@ namespace VaultUserCloudUpload
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(143, 415);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Location = new System.Drawing.Point(497, 216);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.clmIcon,
+            this.clmType,
+            this.colPath});
+            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.Size = new System.Drawing.Size(610, 180);
+            this.dataGridView1.TabIndex = 3;
+            // 
+            // btnRuleDirAdd
+            // 
+            this.btnRuleDirAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRuleDirAdd.Image = ((System.Drawing.Image)(resources.GetObject("btnRuleDirAdd.Image")));
+            this.btnRuleDirAdd.Location = new System.Drawing.Point(628, 12);
+            this.btnRuleDirAdd.Name = "btnRuleDirAdd";
+            this.btnRuleDirAdd.Size = new System.Drawing.Size(26, 26);
+            this.btnRuleDirAdd.TabIndex = 4;
+            this.btnRuleDirAdd.UseVisualStyleBackColor = true;
+            this.btnRuleDirAdd.Click += new System.EventHandler(this.btnRuleDirAdd_Click);
+            // 
+            // folderBrowserDialog1
+            // 
+            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
+            // 
+            // clmIcon
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle4.NullValue")));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White;
+            this.clmIcon.DefaultCellStyle = dataGridViewCellStyle4;
+            this.clmIcon.HeaderText = "";
+            this.clmIcon.Name = "clmIcon";
+            this.clmIcon.ReadOnly = true;
+            this.clmIcon.Width = 20;
+            // 
+            // clmType
+            // 
+            this.clmType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.clmType.FillWeight = 25F;
+            this.clmType.HeaderText = "Account / Project";
+            this.clmType.Name = "clmType";
+            this.clmType.ReadOnly = true;
+            this.clmType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.clmType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // colPath
+            // 
+            this.colPath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colPath.FillWeight = 80F;
+            this.colPath.HeaderText = "Path";
+            this.colPath.Name = "colPath";
+            this.colPath.ReadOnly = true;
             // 
             // SelectProjects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(312, 450);
+            this.ClientSize = new System.Drawing.Size(666, 251);
+            this.Controls.Add(this.btnRuleDirAdd);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnContinue);
-            this.Controls.Add(this.treeView1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SelectProjects";
             this.Text = "SelectProjects";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button btnContinue;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnRuleDirAdd;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.DataGridViewImageColumn clmIcon;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colPath;
     }
 }

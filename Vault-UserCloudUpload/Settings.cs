@@ -33,11 +33,9 @@ namespace VaultUserCloudUpload
         [XmlElement("CloudPath")]
         public string CloudPath;
 
-        #region for future use
-        //[XmlElement("OutputPath")]
-        //public string mOutPutPath;
-        #endregion for future use
-
+        [XmlElement("DriveTypes")]
+        public string DriveTypes;
+        
         private Settings()
         {
 

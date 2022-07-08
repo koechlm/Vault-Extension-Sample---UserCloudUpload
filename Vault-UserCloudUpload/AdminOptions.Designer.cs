@@ -205,10 +205,11 @@ namespace VaultUserCloudUpload
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(161, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(250, 26);
+            this.label3.Size = new System.Drawing.Size(347, 39);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Select all drives exposed for user project selections.\r\nCorresponding cloud proje" +
-    "cts ignore these option.";
+            this.label3.Text = "Select all drives exposed for user project selections or the auto-search\r\noption " +
+    "for corresponding cloud projects.\r\nProjects with valid Desktop Connector drive m" +
+    "appings ignore this option.";
             // 
             // checkedListBox1
             // 
