@@ -99,6 +99,8 @@ namespace VaultUserCloudUpload
 
             //define download settings as a default for all files
             VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings = CreateAcquireSettings();
+            List<VDF.Vault.Settings.AcquireFilesSettings> mAcquireList = new List<VDF.Vault.Settings.AcquireFilesSettings>();
+            mAcquireList.Add(mAcquireSettings);
 
             //get the file ids from the user's selection
             foreach (ISelection entity in e.Context.CurrentSelectionSet)
@@ -107,13 +109,17 @@ namespace VaultUserCloudUpload
             }
 
             //get the dialog to prepare its content
-            UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireSettings);
+            UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireList);
 
             DialogResult dialogResult = mUploadPreview.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                //download validated files iterating the AcquirePackage
-                VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mAcquireSettings);
+                //download files iterating the AcquireList
+                foreach (VDF.Vault.Settings.AcquireFilesSettings mSettings in mAcquireList)
+                {
+                    VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mSettings);
+                }
+
             }
 
             mUploadPreview.Dispose();
@@ -121,7 +127,7 @@ namespace VaultUserCloudUpload
         }
 
 
-        private VDF.Vault.Settings.AcquireFilesSettings CreateAcquireSettings()
+       public static VDF.Vault.Settings.AcquireFilesSettings CreateAcquireSettings()
         {
             VDF.Vault.Settings.AcquireFilesSettings settings = new VDF.Vault.Settings.AcquireFilesSettings(mConnection);
             settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout;
@@ -147,6 +153,8 @@ namespace VaultUserCloudUpload
 
             //define download settings as a default for all files
             VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings = CreateAcquireSettings();
+            List<VDF.Vault.Settings.AcquireFilesSettings> mAcquireList = new List<VDF.Vault.Settings.AcquireFilesSettings>();
+            mAcquireList.Add(mAcquireSettings);
 
             //get the file ids from the user's selection
             foreach (ISelection entity in e.Context.CurrentSelectionSet)
@@ -163,13 +171,16 @@ namespace VaultUserCloudUpload
             {
                 mUserSelectedProjects = mSelectProjects.mProjects;
                 //get the dialog to prepare its content
-                UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireSettings, mUserSelectedProjects);
+                UploadPreview mUploadPreview = new UploadPreview(mFileIds, ref mAcquireList, mUserSelectedProjects);
 
                 DialogResult dialogResult = mUploadPreview.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
-                    //download validated files iterating the AcquirePackage
-                    VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mAcquireSettings);
+                    //download files iterating the AcquireList
+                    foreach (VDF.Vault.Settings.AcquireFilesSettings mSettings in mAcquireList)
+                    {
+                        VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(mSettings);
+                    }
                 }
 
                 mUploadPreview.Dispose();
@@ -235,6 +246,7 @@ namespace VaultUserCloudUpload
 
         public IEnumerable<string> HiddenCommands()
         {
+            //toDo hide the user interactive project sync commands
             return null;
         }
 

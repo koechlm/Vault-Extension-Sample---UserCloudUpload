@@ -22,7 +22,7 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
 
-        public UploadPreview(List<long> mFileIds, ref VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings, List<string> mUserSelectedProjects = null)
+        public UploadPreview(List<long> mFileIds, ref List<VDF.Vault.Settings.AcquireFilesSettings> mAcquireList, List<string> mUserSelectedProjects = null)
         {
             InitializeComponent();
 
@@ -65,8 +65,8 @@ namespace VaultUserCloudUpload
                 var temp1 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId1).FirstOrDefault().Val;
                 if (temp1 is null)
                 {
-                    mSuffix1 = String.Format("[<{0}>]", mNameSuffix1);
-                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[<>]'.";
+                    mSuffix1 = String.Format("[{0}]", mNameSuffix1);
+                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
                 }
                 else
                 {
@@ -78,8 +78,8 @@ namespace VaultUserCloudUpload
                 var temp2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault().Val;
                 if (temp2 is null)
                 {
-                    mSuffix2 = String.Format("[<{0}>]", mNameSuffix2);
-                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[<>]'.";
+                    mSuffix2 = String.Format("[{0}]", mNameSuffix2);
+                    mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
                 }
                 else
                 {
@@ -96,6 +96,7 @@ namespace VaultUserCloudUpload
                 if (mUserSelectedProjects != null)
                 {
                     //add the individual file to each validated project path
+                    int i = 0;
                     foreach (string mPath in mUserSelectedProjects)
                     {
                         mValidPath = (new System.IO.DirectoryInfo(mPath)).Exists;
@@ -111,7 +112,26 @@ namespace VaultUserCloudUpload
                             //add the individual file and its target download path to the AcquisitionOptions
                             VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
                             VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                            mAcquireSettings.AddFileToAcquire(mFileIt, mAcquireSettings.DefaultAcquisitionOption, mLocalPath);
+                            mAcquireList[i].AddFileToAcquire(mFileIt, mAcquireList[i].DefaultAcquisitionOption, mLocalPath);
+
+                            //add the files to the preview list and mark an error if the target path or filename is not validated successfully
+                            if (mValidPath == false)
+                            {
+                                dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);
+                                dtGrdUploadFiles.Rows[dtGrdUploadFiles.RowCount - 1].ErrorText = "File will not upload";
+                            }
+                            else
+                            {
+                                dtGrdUploadFiles.Rows.Add(true, mUploadFileName, mCldDrvPath, mRestrictionText);
+                            }
+
+                            if (mUserSelectedProjects.Count > mAcquireList.Count)
+                            {
+                                VDF.Vault.Settings.AcquireFilesSettings settings = VaultExtension.CreateAcquireSettings();
+                                mAcquireList.Add(settings);
+                                i += 1;
+                            }
+
                         }
                     }
                 }
@@ -181,7 +201,7 @@ namespace VaultUserCloudUpload
                             //add the individual file and its target download path to the AcquisitionOptions
                             VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
                             VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                            mAcquireSettings.AddFileToAcquire(mFileIt, mAcquireSettings.DefaultAcquisitionOption, mLocalPath);
+                            mAcquireList[0].AddFileToAcquire(mFileIt, mAcquireList[0].DefaultAcquisitionOption, mLocalPath);
                         }
 
                     }
@@ -190,19 +210,21 @@ namespace VaultUserCloudUpload
                         mCldDrvPath = "";
                         mRestrictionText = "Could not find corresponding or registered cloud project";
                     }
+
+                    //add the files to the preview list and mark an error if the target path or filename is not validated successfully
+                    if (mValidPath == false)
+                    {
+                        dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);
+                        dtGrdUploadFiles.Rows[dtGrdUploadFiles.RowCount - 1].ErrorText = "File will not upload";
+                    }
+                    else
+                    {
+                        dtGrdUploadFiles.Rows.Add(true, mUploadFileName, mCldDrvPath, mRestrictionText);
+                    }
+
                 } //configured or corresponding projects
 
 
-                //add the files to the preview list and mark an error if the target path or filename is not validated successfully
-                if (mValidPath == false)
-                {
-                    dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);
-                    dtGrdUploadFiles.Rows[dtGrdUploadFiles.RowCount - 1].ErrorText = "File will not upload";
-                }
-                else
-                {
-                    dtGrdUploadFiles.Rows.Add(true, mUploadFileName, mCldDrvPath, mRestrictionText);
-                }
             }
 
         }
