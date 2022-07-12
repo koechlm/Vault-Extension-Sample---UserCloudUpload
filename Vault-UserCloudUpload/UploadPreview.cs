@@ -22,7 +22,7 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
 
-        public UploadPreview(List<long> mFileIds, ref List<VDF.Vault.Settings.AcquireFilesSettings> mAcquireList, List<string> mUserSelectedProjects = null)
+        public UploadPreview(List<long> mFileIds, ref Dictionary<string, VDF.Vault.Settings.AcquireFilesSettings> mAcquireDict, List<string> mUserSelectedProjects = null)
         {
             InitializeComponent();
 
@@ -49,13 +49,17 @@ namespace VaultUserCloudUpload
             List<ACW.File> mFilesToUpload = new List<ACW.File>();
             mFilesToUpload = mFiles.ToList<ACW.File>();
 
-            foreach (ACW.File file in mFilesToUpload)
+            foreach (ACW.File mFile in mFilesToUpload)
             {
+                //a file must not add multiple times to one acquire package (settings); we build individual acquiresettings for each file
+                string mKey = mFile.MasterId.ToString();
+                VDF.Vault.Settings.AcquireFilesSettings mAcquireSettings = null;
+
                 //preset error handling for each file
                 bool mValidPath = false;
 
                 //get the property instances of the individual file
-                IEnumerable<ACW.PropInst> mFilePropInsts = mAllFilesPropInsts.Where(n => n.EntityId == file.Id);
+                IEnumerable<ACW.PropInst> mFilePropInsts = mAllFilesPropInsts.Where(n => n.EntityId == mFile.Id);
 
                 //build the file name; the original name might get two configured suffixes to indicate content and revision
                 //toDo - handle property value types if needed
@@ -87,8 +91,8 @@ namespace VaultUserCloudUpload
                     //remove characters not allowed for filenames
                     mSuffix2 = String.Format("[{0}]", Regex.Replace(mSuffix2, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
                 }
-                string mFileExt = '.' + file.VerName.Split('.').Last();
-                string mFileName = file.VerName.Replace(mFileExt, "");
+                string mFileExt = '.' + mFile.VerName.Split('.').Last();
+                string mFileName = mFile.VerName.Replace(mFileExt, "");
                 string mUploadFileName = mFileName + "--" + mSuffix1 + "--" + mSuffix2 + mFileExt;
 
                 //differentiate user selected projects vs. configured/corresponding projects
@@ -96,7 +100,6 @@ namespace VaultUserCloudUpload
                 if (mUserSelectedProjects != null)
                 {
                     //add the individual file to each validated project path
-                    int i = 0;
                     foreach (string mPath in mUserSelectedProjects)
                     {
                         mValidPath = (new System.IO.DirectoryInfo(mPath)).Exists;
@@ -110,9 +113,14 @@ namespace VaultUserCloudUpload
                             mCldDrvPath = mPath;
                             btnUpload.Enabled = true;
                             //add the individual file and its target download path to the AcquisitionOptions
-                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
+                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
                             VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                            mAcquireList[i].AddFileToAcquire(mFileIt, mAcquireList[i].DefaultAcquisitionOption, mLocalPath);
+
+                            //the current file shares to 1 to n projects; this requires individual acquire packages for each target
+                            mAcquireSettings = VaultExtension.CreateAcquireSettings();
+                            mKey = mFile.MasterId.ToString() + mLocalPath.ToString();
+                            mAcquireDict.Add(mKey, mAcquireSettings);
+                            mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
 
                             //add the files to the preview list and mark an error if the target path or filename is not validated successfully
                             if (mValidPath == false)
@@ -125,20 +133,13 @@ namespace VaultUserCloudUpload
                                 dtGrdUploadFiles.Rows.Add(true, mUploadFileName, mCldDrvPath, mRestrictionText);
                             }
 
-                            if (mUserSelectedProjects.Count > mAcquireList.Count)
-                            {
-                                VDF.Vault.Settings.AcquireFilesSettings settings = VaultExtension.CreateAcquireSettings();
-                                mAcquireList.Add(settings);
-                                i += 1;
-                            }
-
                         }
                     }
                 }
                 else
                 {
                     //get and validate the parent projects cloud project path mapping
-                    ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(file.FolderId);
+                    ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(mFile.FolderId);
                     ACW.Folder mProjectFldr = null;
 
                     if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
@@ -199,9 +200,12 @@ namespace VaultUserCloudUpload
                         else
                         {
                             //add the individual file and its target download path to the AcquisitionOptions
-                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, file);
+                            mAcquireSettings = VaultExtension.CreateAcquireSettings();
+                            mAcquireDict.Add(mKey, mAcquireSettings);
+                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
                             VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                            mAcquireList[0].AddFileToAcquire(mFileIt, mAcquireList[0].DefaultAcquisitionOption, mLocalPath);
+                            mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+
                         }
 
                     }
