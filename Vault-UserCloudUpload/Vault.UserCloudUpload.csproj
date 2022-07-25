@@ -137,6 +137,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="CodeSnippets\Export BIM-Content-Vault.iLogicVb" />
+    <None Include="CodeSnippets\Export RVT-Vault.iLogicVb" />
     <None Include="Key.snk" />
     <None Include="VaultUserCloudUpload.vcet.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
