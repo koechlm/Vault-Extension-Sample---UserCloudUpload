@@ -162,6 +162,7 @@
     <None Include="Resources\AppMngr_32x32_light.png" />
     <Content Include="Resources\Add_Generic_16.png" />
     <Content Include="Resources\AdminOptionsImage_16_dark.png" />
+    <Content Include="Resources\AdminOptionsImage_16_light.ico" />
     <Content Include="Resources\AppMngr_16x16_dark.png" />
     <Content Include="Resources\AppMngr_32x32_dark.png" />
     <Content Include="Resources\autodesk-docs-small-badge-16.png" />
@@ -172,10 +173,13 @@
     <Content Include="Resources\CheckOut_16_dark.png" />
     <Content Include="Resources\CheckOut_32_dark.png" />
     <Content Include="Resources\cmdPush_16_dark.png" />
+    <Content Include="Resources\cmdPush_16_light.ico" />
     <Content Include="Resources\cmdPush_32_dark.png" />
     <Content Include="Resources\GlobalFolderView_16_dark.png" />
+    <Content Include="Resources\GlobalFolderView_16_light.ico" />
     <Content Include="Resources\GlobalFolderView_32_dark.png" />
     <Content Include="Resources\Sites_16_dark.png" />
+    <Content Include="Resources\Sites_16_light.ico" />
     <Content Include="Resources\Sites_32_dark.png" />
     <Content Include="Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

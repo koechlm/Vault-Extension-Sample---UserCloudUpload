@@ -173,7 +173,7 @@ namespace VaultUserCloudUpload
                         //try to find a corresponding mapped drive project name
                         if (mValidPath != true)
                         {
-                            List<string> mEnabledDrives = mSettings.DriveTypes.Split(',').ToList();
+                            List<string> mEnabledDrives = mSettings.DriveTypes.ToList();
                             foreach (string item in mEnabledDrives)
                             {
                                 item.TrimEnd().TrimStart();

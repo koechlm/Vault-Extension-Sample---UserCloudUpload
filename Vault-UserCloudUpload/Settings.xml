@@ -15,5 +15,8 @@
   
   <!-- Comma separated list of enabled Drive Types; valid values are Drive,Docs,Fusion-->
   <DriveTypes>Drive,Docs,Fusion</DriveTypes>
+  
+  <!-- '|' separated list of file conversion settings: Target Drive|Native Format|Target Format|UploadDWF-->
+  <DriveConversionSettings>Autodesk Docs|*.IPT|*.DWG (3D)|False</DriveConversionSettings>
 
 </settings>

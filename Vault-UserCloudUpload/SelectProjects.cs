@@ -30,7 +30,7 @@ namespace VaultUserCloudUpload
 
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
-            List<string> mEnabledDrives = mSettings.DriveTypes.Split(',').ToList();
+            List<string> mEnabledDrives = mSettings.DriveTypes.ToList();
             foreach (string item in mEnabledDrives)
             {
                 item.Replace(" ", "");
