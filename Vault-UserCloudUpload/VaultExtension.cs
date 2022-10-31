@@ -22,6 +22,7 @@ namespace VaultUserCloudUpload
         public static Settings mSettings = null;
         public static bool mConfigPerm = false;
         public static bool mSettingsChanged = false;
+        public static ACW.PropDef[] mFldrPropDefs = null;
         //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
         //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
@@ -127,7 +128,7 @@ namespace VaultUserCloudUpload
         }
 
 
-       public static VDF.Vault.Settings.AcquireFilesSettings CreateAcquireSettings()
+        public static VDF.Vault.Settings.AcquireFilesSettings CreateAcquireSettings()
         {
             VDF.Vault.Settings.AcquireFilesSettings settings = new VDF.Vault.Settings.AcquireFilesSettings(mConnection);
             settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout;
@@ -240,7 +241,65 @@ namespace VaultUserCloudUpload
 
         public IEnumerable<DetailPaneTab> DetailTabs()
         {
-            return null;
+            // Create a DetailPaneTab list to return from method
+            List<DetailPaneTab> mTabs = new List<DetailPaneTab>();
+
+            // Create Selection Info tab for Files
+            DetailPaneTab mBrowserTab = new DetailPaneTab("Fldr.Tab.browsertab",
+                                                        "Cloud Project View",
+                                                        SelectionTypeId.Folder,
+                                                        typeof(BrowserControl)); //type of our UserControl
+
+            //The propertyTab_SelectionChanged is called whenever our tab is active and the selection    
+            //changes in the main grid 
+            mBrowserTab.SelectionChanged += mBrowserTab_SelectionChanged;
+            mTabs.Add(mBrowserTab);
+
+            return mTabs;
+
+        }
+
+        private void mBrowserTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Context.SelectedObject != null && e.Context.SelectedObject.TypeId.EntityClassId == "FLDR")
+            {
+                try
+                {
+                    long FolderId = e.Context.SelectedObject.Id;
+                    //get the selected folder's property values
+                    ACW.PropInst[] mSourcePropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { FolderId });
+                    string mPropDispName = mSettings.CloudPath;
+                    long mPropId = mFldrPropDefs.Where(n => n.DispName == mSettings.CloudPath).FirstOrDefault().Id;
+                    string mPropVal = null;
+                    //it might happen that the prop is not assigned to a folder
+                    try
+                    {
+                        mPropVal = (string)mSourcePropInsts.Where(n => n.PropDefId == mPropId).FirstOrDefault().Val;
+                    }
+                    catch (Exception)
+                    {
+                        mPropVal = "about:blank";
+                    }
+
+                    if (mPropVal == null || mPropVal == "")
+                    {
+                        mPropVal = "about:blank";
+                    }
+
+                    // The event args has our custom tab object.  We need to cast it to our type.
+                    BrowserControl tabControl = e.Context.UserControl as BrowserControl;
+
+                    // activate the URL in the tab's web viewer
+                    tabControl.mNavigate(mPropVal);
+                }
+                catch (Exception ex)
+                {
+                    // If something goes wrong, we don't want the exception to bubble up to Vault Explorer.
+                    VDF.Forms.Library.ShowError("Error: " + ex.Message, "Vault2Cloud Cloud Project View Tab");
+                }
+            }
+
+
         }
 
         public IEnumerable<string> HiddenCommands()
@@ -257,6 +316,9 @@ namespace VaultUserCloudUpload
         public void OnLogOn(IApplication application)
         {
             mConnection = application.Connection;
+            //toDo - replace by LoadFromVault
+            mSettings = Settings.Load();
+            mFldrPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
             //mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
         }
 

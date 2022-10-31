@@ -33,7 +33,8 @@ namespace VaultUserCloudUpload
 
             //Get the property definitions for FILE and FLDR
             ACW.PropDef[] mFilePropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FILE");
-            ACW.PropDef[] mFolderPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
+            //ACW.PropDef[] mFolderPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
+            ACW.PropDef[] mFolderPropDefs = VaultUserCloudUpload.VaultExtension.mFldrPropDefs;
 
             long mSuffixId1 = mFilePropDefs.Where(n => n.DispName == mNameSuffix1).FirstOrDefault().Id;
             long mSuffixId2 = mFilePropDefs.Where(n => n.DispName == mNameSuffix2).FirstOrDefault().Id;
