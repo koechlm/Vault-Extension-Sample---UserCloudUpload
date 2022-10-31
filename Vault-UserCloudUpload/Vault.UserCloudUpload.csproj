@@ -165,6 +165,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Vault.UserCloudUploadSettings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\VLTM-2023.0.0.F-icon.ico" />
     <None Include="Resources\VLTM-2023.0.0.F-icon.png" />
     <None Include="Resources\cmdPush_16_light.png" />
@@ -201,9 +204,6 @@
     <Content Include="Resources\Sites_16_dark.png" />
     <Content Include="Resources\Sites_16_light.ico" />
     <Content Include="Resources\Sites_32_dark.png" />
-    <Content Include="Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AdminOptions.resx">

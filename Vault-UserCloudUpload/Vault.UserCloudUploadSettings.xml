@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <FileNameSuffixes>Title,Revision</FileNameSuffixes>
+  <VaultFolderCat>Project</VaultFolderCat>
+  <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
+  <CloudPath>Cloud URL</CloudPath>
+  <DriveTypes>Drive</DriveTypes>
+  <DriveTypes>Docs</DriveTypes>
+</settings>
