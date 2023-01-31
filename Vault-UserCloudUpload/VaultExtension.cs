@@ -19,10 +19,12 @@ namespace VaultUserCloudUpload
     public class VaultExtension : IExplorerExtension
     {
         public static VDF.Vault.Currency.Connections.Connection mConnection = null;
+        public static ACWT.WebServiceManager mWsMgr = null;
         public static Settings mSettings = null;
         public static bool mConfigPerm = false;
         public static bool mSettingsChanged = false;
         public static ACW.PropDef[] mFldrPropDefs = null;
+        public static List<string> mPropDispNames = new List<string>();
         //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
         //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
@@ -91,6 +93,18 @@ namespace VaultUserCloudUpload
             mVaultExtensionCmdSites.Add(mUploadToCloudCmdSite);
 
             return mVaultExtensionCmdSites;
+        }
+
+        public static List<string> mGetPropNames()
+        {
+            mWsMgr = mConnection.WebServiceManager;
+            ACW.PropDef[] mPropDefs = mWsMgr.PropertyService.GetPropertyDefinitionsByEntityClassId("FILE");
+            List<string> mPropNames = new List<string>();
+            foreach (var item in mPropDefs)
+            {
+                mPropNames.Add(item.DispName);
+            }
+            return mPropNames;
         }
 
         private void mUploadToCloudProjectCmd_Execute(object sender, CommandItemEventArgs e)
@@ -295,7 +309,7 @@ namespace VaultUserCloudUpload
                 catch (Exception ex)
                 {
                     // If something goes wrong, we don't want the exception to bubble up to Vault Explorer.
-                    VDF.Forms.Library.ShowError("Error: " + ex.Message, "Vault2Cloud Cloud Project View Tab");
+                    VDF.Forms.Library.ShowError("Error: " + ex.Message, "Vault2Cloud User Upload Sample - View Tab");
                 }
             }
 

@@ -32,8 +32,8 @@ namespace VaultUserCloudUpload
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminOptions));
             this.btnExport = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnSaveToVault = new System.Windows.Forms.Button();
+            this.btnLoadFromVault = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbSuffix2UDP = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -96,37 +96,39 @@ namespace VaultUserCloudUpload
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // button1
+            // btnSaveToVault
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.AutoSize = true;
-            this.button1.Image = global::VaultUserCloudUpload.Properties.Resources.CheckIn_32_light;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(532, 306);
-            this.button1.Name = "button1";
-            this.button1.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.button1.Size = new System.Drawing.Size(123, 38);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Save to Vault";
-            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSaveToVault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveToVault.AutoSize = true;
+            this.btnSaveToVault.Image = global::VaultUserCloudUpload.Properties.Resources.CheckIn_32_light;
+            this.btnSaveToVault.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSaveToVault.Location = new System.Drawing.Point(532, 306);
+            this.btnSaveToVault.Name = "btnSaveToVault";
+            this.btnSaveToVault.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.btnSaveToVault.Size = new System.Drawing.Size(123, 38);
+            this.btnSaveToVault.TabIndex = 2;
+            this.btnSaveToVault.Text = "Save to Vault";
+            this.btnSaveToVault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSaveToVault.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnSaveToVault.UseVisualStyleBackColor = true;
+            this.btnSaveToVault.Click += new System.EventHandler(this.btnSaveToVault_Click);
             // 
-            // btnLoad
+            // btnLoadFromVault
             // 
-            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoad.AutoSize = true;
-            this.btnLoad.Image = global::VaultUserCloudUpload.Properties.Resources.CheckOut_32_light;
-            this.btnLoad.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnLoad.Location = new System.Drawing.Point(393, 306);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnLoad.Size = new System.Drawing.Size(133, 38);
-            this.btnLoad.TabIndex = 3;
-            this.btnLoad.Text = "Load from Vault";
-            this.btnLoad.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnLoad.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoadFromVault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadFromVault.AutoSize = true;
+            this.btnLoadFromVault.Image = global::VaultUserCloudUpload.Properties.Resources.CheckOut_32_light;
+            this.btnLoadFromVault.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLoadFromVault.Location = new System.Drawing.Point(393, 306);
+            this.btnLoadFromVault.Name = "btnLoadFromVault";
+            this.btnLoadFromVault.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.btnLoadFromVault.Size = new System.Drawing.Size(133, 38);
+            this.btnLoadFromVault.TabIndex = 3;
+            this.btnLoadFromVault.Text = "Load from Vault";
+            this.btnLoadFromVault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnLoadFromVault.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnLoadFromVault.UseVisualStyleBackColor = true;
+            this.btnLoadFromVault.Click += new System.EventHandler(this.btnLoadFromVault_Click);
             // 
             // groupBox1
             // 
@@ -179,11 +181,6 @@ namespace VaultUserCloudUpload
             // cmbSuffix1UDP
             // 
             this.cmbSuffix1UDP.FormattingEnabled = true;
-            this.cmbSuffix1UDP.Items.AddRange(new object[] {
-            "",
-            "Title",
-            "Subject",
-            "Description"});
             this.cmbSuffix1UDP.Location = new System.Drawing.Point(103, 18);
             this.cmbSuffix1UDP.Name = "cmbSuffix1UDP";
             this.cmbSuffix1UDP.Size = new System.Drawing.Size(121, 21);
@@ -452,13 +449,14 @@ namespace VaultUserCloudUpload
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(667, 356);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.btnLoad);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnLoadFromVault);
+            this.Controls.Add(this.btnSaveToVault);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnExport);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AdminOptions";
             this.Text = "AdminOptions";
+            this.Load += new System.EventHandler(this.AdminOptions_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -478,8 +476,8 @@ namespace VaultUserCloudUpload
 
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnImport;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnSaveToVault;
+        private System.Windows.Forms.Button btnLoadFromVault;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox cmbSuffix2UDP;
         private System.Windows.Forms.Label label4;

@@ -14,6 +14,8 @@ namespace VaultUserCloudUpload
 {
     public partial class AdminOptions : Form
     {
+        private bool mVaultSettingsLoaded = false;
+
         public AdminOptions()
         {
             InitializeComponent();
@@ -21,6 +23,15 @@ namespace VaultUserCloudUpload
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            if (mVaultSettingsLoaded)
+            {
+                var retval = VDF.Forms.Library.ShowMessage("Importing settings will overwrite all current configuration settings.\n\r\n\rPress OK to load, press Cancel to keep current settings.", "Load Settings", VDF.Forms.Currency.ButtonConfiguration.OkCancel);
+                if (retval == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             try
             {
                 Settings mNewSettings = Settings.Load();
@@ -29,22 +40,21 @@ namespace VaultUserCloudUpload
                 cmbSuffix1UDP.Text = mNewSettings.FileNameSuffixies.Split(',').FirstOrDefault();
                 cmbSuffix2UDP.Text = mNewSettings.FileNameSuffixies.Split(',').LastOrDefault();
 
-                for (int i = 0; i < mNewSettings.DriveTypes.Count(); i++)
+                foreach (var item in mNewSettings.DriveTypes)
                 {
-                    if (mNewSettings.DriveTypes[i] == "Drive")
+                    if (item == "Drive")
                     {
-                        chckdListDriveTypes.SetItemCheckState(i, CheckState.Checked);
+                        chckdListDriveTypes.SetItemCheckState(0, CheckState.Checked);
                     }
-                    if (mNewSettings.DriveTypes[i] == "Docs")
+                    if (item == "Docs")
                     {
-                        chckdListDriveTypes.SetItemCheckState(i, CheckState.Checked);
+                        chckdListDriveTypes.SetItemCheckState(1, CheckState.Checked);
                     }
-                    if (mNewSettings.DriveTypes[i] == "Fusion")
+                    if (item == "Fusion")
                     {
-                        chckdListDriveTypes.SetItemCheckState(i, CheckState.Checked);
+                        chckdListDriveTypes.SetItemCheckState(2, CheckState.Checked);
                     }
                 }
-
                 cmbFldCategory.Text = mNewSettings.VaultFolderCat;
                 cmbCloudDrivePathUDP.Text = mNewSettings.CloudDrivePath;
                 cmbCloudDriveUrlUDP.Text = mNewSettings.CloudPath;
@@ -52,10 +62,11 @@ namespace VaultUserCloudUpload
                 //Conversion Tab
                 mUpdateDrvConfSettingsGrid(mNewSettings.DriveConversionSettings);
 
+                mVaultSettingsLoaded = true;
             }
             catch (Exception)
             {
-                VDF.Forms.Library.ShowError("Could not import settings. Check the permissions Vault Extensions folder.", "Configuration Import");
+                VDF.Forms.Library.ShowError("An error occurred while loading settings from Vault.\n\r\n\rCheck folder read permissions. Or the setting file's content.", "Configuration Import");
             }
         }
 
@@ -139,5 +150,91 @@ namespace VaultUserCloudUpload
             }
         }
 
+        private void btnLoadFromVault_Click(object sender, EventArgs e)
+        {
+            if (mVaultSettingsLoaded)
+            {
+                var retval = VDF.Forms.Library.ShowMessage("Loading settings from Vault will overwrite all current configuration settings.\n\r\n\rPress OK to load, press Cancel to keep current settings.", "Load Settings", VDF.Forms.Currency.ButtonConfiguration.OkCancel);
+                if (retval == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            mLoadSettingsFromVault();
+        }
+
+        private void mLoadSettingsFromVault()
+        {
+            try
+            {
+                Settings mNewSettings = Settings.LoadFromVault(VaultExtension.mConnection);
+
+                //Mapping tab
+                cmbSuffix1UDP.Text = mNewSettings.FileNameSuffixies.Split(',').FirstOrDefault();
+                cmbSuffix2UDP.Text = mNewSettings.FileNameSuffixies.Split(',').LastOrDefault();
+
+                foreach (var item in mNewSettings.DriveTypes)
+                {
+                    if (item == "Drive")
+                    {
+                        chckdListDriveTypes.SetItemCheckState(0, CheckState.Checked);
+                    }
+                    if (item == "Docs")
+                    {
+                        chckdListDriveTypes.SetItemCheckState(1, CheckState.Checked);
+                    }
+                    if (item == "Fusion")
+                    {
+                        chckdListDriveTypes.SetItemCheckState(2, CheckState.Checked);
+                    }
+                }
+
+                cmbFldCategory.Text = mNewSettings.VaultFolderCat;
+                cmbCloudDrivePathUDP.Text = mNewSettings.CloudDrivePath;
+                cmbCloudDriveUrlUDP.Text = mNewSettings.CloudPath;
+
+                //Conversion Tab
+                mUpdateDrvConfSettingsGrid(mNewSettings.DriveConversionSettings);
+
+                mVaultSettingsLoaded = true;
+            }
+            catch (Exception)
+            {
+                VDF.Forms.Library.ShowError("An error occurred while loading settings from Vault.", "Load Configuration");
+            }
+        }
+
+        private void btnSaveToVault_Click(object sender, EventArgs e)
+        {
+            Settings mActiveSettings = new Settings();
+            //Mapping tab
+            mActiveSettings.FileNameSuffixies = cmbSuffix1UDP.Text + "," + cmbSuffix2UDP.Text;
+            mActiveSettings.DriveTypes = mGetDriveTypes();
+            mActiveSettings.VaultFolderCat = cmbFldCategory.Text;
+            mActiveSettings.CloudDrivePath = cmbCloudDrivePathUDP.Text;
+            mActiveSettings.CloudPath = cmbCloudDriveUrlUDP.Text;
+            //Conversion tab
+            mActiveSettings.DriveConversionSettings = mGetDrvConvSettings();
+
+            bool mExpSuccess = mActiveSettings.SaveToVault(VaultExtension.mConnection);
+            if (mExpSuccess == true)
+            {
+                VDF.Forms.Library.ShowMessage("Successfully exported settings to local file.", "Save Configuration", VDF.Forms.Currency.ButtonConfiguration.Ok);
+            }
+            else
+            {
+                VDF.Forms.Library.ShowError("Export settings to local file failed. Check the permissions Vault Extensions folder.", "Save Configuration");
+            }
+        }
+
+        private void AdminOptions_Load(object sender, EventArgs e)
+        {
+            VaultExtension.mPropDispNames = VaultExtension.mGetPropNames();
+            cmbSuffix1UDP.Items.AddRange(VaultExtension.mPropDispNames.ToArray());
+            cmbSuffix2UDP.Items.AddRange(VaultExtension.mPropDispNames.ToArray());
+
+            mLoadSettingsFromVault();
+        }
     }
 }

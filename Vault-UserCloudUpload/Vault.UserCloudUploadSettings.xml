@@ -4,6 +4,7 @@
   <VaultFolderCat>Project</VaultFolderCat>
   <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
   <CloudPath>Cloud URL</CloudPath>
-  <DriveTypes>Drive</DriveTypes>
   <DriveTypes>Docs</DriveTypes>
+  <DriveConversionSettings>Autodesk Docs|*.IPT|*.RVT|True</DriveConversionSettings>
+  <DriveConversionSettings>Autodesk Docs|*.IAM|*.RVT|True</DriveConversionSettings>
 </settings>
