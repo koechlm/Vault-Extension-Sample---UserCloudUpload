@@ -230,10 +230,13 @@ namespace VaultUserCloudUpload
 
         private void AdminOptions_Load(object sender, EventArgs e)
         {
-            VaultExtension.mPropDispNames = VaultExtension.mGetPropNames();
-            cmbSuffix1UDP.Items.AddRange(VaultExtension.mPropDispNames.ToArray());
-            cmbSuffix2UDP.Items.AddRange(VaultExtension.mPropDispNames.ToArray());
-
+            VaultExtension.mFilePropDispNames = VaultExtension.mGetFilePropNames();
+            cmbSuffix1UDP.Items.AddRange(VaultExtension.mFilePropDispNames.ToArray());
+            cmbSuffix2UDP.Items.AddRange(VaultExtension.mFilePropDispNames.ToArray());
+            cmbFldCategory.Items.AddRange(VaultExtension.mGetFldCatNames().ToArray());
+            VaultExtension.mFldrPropNames = VaultExtension.mGetFldPropNames();
+            cmbCloudDrivePathUDP.Items.AddRange(VaultExtension.mFldrPropNames.ToArray());
+            cmbCloudDriveUrlUDP.Items.AddRange(VaultExtension.mFldrPropNames.ToArray());
             mLoadSettingsFromVault();
         }
     }

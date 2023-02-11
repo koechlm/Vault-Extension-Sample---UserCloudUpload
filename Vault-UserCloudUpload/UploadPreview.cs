@@ -64,6 +64,8 @@ namespace VaultUserCloudUpload
 
                 //build the file name; the original name might get two configured suffixes to indicate content and revision
                 //toDo - handle property value types if needed
+                string mFileExt = '.' + mFile.VerName.Split('.').Last();
+                string mFileName = mFile.VerName.Replace(mFileExt, "");
                 string mSuffix1 = null;
                 string mSuffix2 = null;
                 string mRestrictionText = null;
@@ -77,8 +79,8 @@ namespace VaultUserCloudUpload
                 {
                     mSuffix1 = temp1.ToString();
                     //remove characters not allowed for filenames
-                    mSuffix1 = String.Format("[{0}]", Regex.Replace(mSuffix1, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
-
+                    mSuffix1 = String.Format("{0}", Regex.Replace(mSuffix1, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
+                    mFileName = mFileName + "-" + mSuffix1;
                 }
                 var temp2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault().Val;
                 if (temp2 is null)
@@ -90,11 +92,10 @@ namespace VaultUserCloudUpload
                 {
                     mSuffix2 = temp2.ToString();
                     //remove characters not allowed for filenames
-                    mSuffix2 = String.Format("[{0}]", Regex.Replace(mSuffix2, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
+                    mSuffix2 = String.Format("{0}", Regex.Replace(mSuffix2, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
+                    mFileName = mFileName + "-" + mSuffix2;
                 }
-                string mFileExt = '.' + mFile.VerName.Split('.').Last();
-                string mFileName = mFile.VerName.Replace(mFileExt, "");
-                string mUploadFileName = mFileName + "--" + mSuffix1 + "--" + mSuffix2 + mFileExt;
+                string mUploadFileName = mFileName + mFileExt;
 
                 //differentiate user selected projects vs. configured/corresponding projects
                 string mCldDrvPath = null;
@@ -109,19 +110,26 @@ namespace VaultUserCloudUpload
                             mCldDrvPath = "";
                             mRestrictionText = "Could not find corresponding or registered cloud project";
                         }
-                        else
+                        else //valid local path
                         {
-                            mCldDrvPath = mPath;
-                            btnUpload.Enabled = true;
-                            //add the individual file and its target download path to the AcquisitionOptions
-                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
-                            VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
+                            if ((mPath + "\\" + mUploadFileName).ToString().Length > 256)
+                            {
+                                mRestrictionText = "Error - The resulting file name and path exceeds 256 characters.";
+                            }
+                            else
+                            {
+                                mCldDrvPath = mPath;
+                                btnUpload.Enabled = true;
+                                //add the individual file and its target download path to the AcquisitionOptions
+                                VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
+                                VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
 
-                            //the current file shares to 1 to n projects; this requires individual acquire packages for each target
-                            mAcquireSettings = VaultExtension.CreateAcquireSettings();
-                            mKey = mFile.MasterId.ToString() + mLocalPath.ToString();
-                            mAcquireDict.Add(mKey, mAcquireSettings);
-                            mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                                //the current file shares to 1 to n projects; this requires individual acquire packages for each target
+                                mAcquireSettings = VaultExtension.CreateAcquireSettings();
+                                mKey = mFile.MasterId.ToString() + mLocalPath.ToString();
+                                mAcquireDict.Add(mKey, mAcquireSettings);
+                                mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                            }
 
                             //add the files to the preview list and mark an error if the target path or filename is not validated successfully
                             if (mValidPath == false)

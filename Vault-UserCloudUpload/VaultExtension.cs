@@ -24,7 +24,9 @@ namespace VaultUserCloudUpload
         public static bool mConfigPerm = false;
         public static bool mSettingsChanged = false;
         public static ACW.PropDef[] mFldrPropDefs = null;
-        public static List<string> mPropDispNames = new List<string>();
+        public static List<string> mFldrPropNames = new List<string>();
+        public static List<string> mFilePropDispNames = new List<string>();
+        public static List<string> mFldrCatNames = new List<string>();
         //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
         //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
@@ -95,7 +97,7 @@ namespace VaultUserCloudUpload
             return mVaultExtensionCmdSites;
         }
 
-        public static List<string> mGetPropNames()
+        public static List<string> mGetFilePropNames()
         {
             mWsMgr = mConnection.WebServiceManager;
             ACW.PropDef[] mPropDefs = mWsMgr.PropertyService.GetPropertyDefinitionsByEntityClassId("FILE");
@@ -105,6 +107,30 @@ namespace VaultUserCloudUpload
                 mPropNames.Add(item.DispName);
             }
             return mPropNames;
+        }
+
+        public static List<string> mGetFldPropNames()
+        {
+            mWsMgr = mConnection.WebServiceManager;
+            ACW.PropDef[] mPropDefs = mWsMgr.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
+            List<string> mPropNames = new List<string>();
+            foreach (var item in mPropDefs)
+            {
+                mPropNames.Add(item.DispName);
+            }
+            return mPropNames;
+        }
+
+        public static List<string> mGetFldCatNames()
+        {
+            mWsMgr = mConnection.WebServiceManager;
+            ACW.Cat[] mCats = mWsMgr.CategoryService.GetCategoriesByEntityClassId("FLDR", true);
+            List<string> mCatNames = new List<string>();
+            foreach (var item in mCats)
+            {
+                mCatNames.Add(item.Name);
+            }
+            return mCatNames;
         }
 
         private void mUploadToCloudProjectCmd_Execute(object sender, CommandItemEventArgs e)
@@ -333,6 +359,7 @@ namespace VaultUserCloudUpload
             //toDo - replace by LoadFromVault
             mSettings = Settings.Load();
             mFldrPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
+
             //mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
         }
 

@@ -61,6 +61,8 @@ namespace VaultUserCloudUpload
             this.NativeFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.TargetFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.UploadDWF = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.label11 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -134,6 +136,7 @@ namespace VaultUserCloudUpload
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.cmbSuffix2UDP);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label2);
@@ -346,12 +349,14 @@ namespace VaultUserCloudUpload
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(643, 274);
             this.tabControl1.TabIndex = 7;
+            this.tabControl1.Visible = false;
             // 
             // tabPage1
             // 
@@ -442,6 +447,25 @@ namespace VaultUserCloudUpload
     "ected target format.";
             this.UploadDWF.TrueValue = "true";
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.Location = new System.Drawing.Point(421, 16);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(114, 26);
+            this.label11.TabIndex = 6;
+            this.label11.Text = "Optional: Leave blank,\r\nif no suffix is needed.";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(635, 248);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "File Types";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // AdminOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -505,5 +529,7 @@ namespace VaultUserCloudUpload
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox cmbFldCategory;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }
