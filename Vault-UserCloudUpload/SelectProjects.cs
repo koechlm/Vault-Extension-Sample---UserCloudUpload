@@ -28,8 +28,7 @@ namespace VaultUserCloudUpload
         {
             InitializeComponent();
 
-            //toDo - replace by LoadFromVault
-            mSettings = Settings.Load();
+            mSettings = Settings.LoadFromVault(mConnection);
             List<string> mEnabledDrives = mSettings.DriveTypes.ToList();
             foreach (string item in mEnabledDrives)
             {

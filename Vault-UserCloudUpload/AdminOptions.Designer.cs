@@ -35,6 +35,7 @@ namespace VaultUserCloudUpload
             this.btnSaveToVault = new System.Windows.Forms.Button();
             this.btnLoadFromVault = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.cmbSuffix2UDP = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -55,14 +56,13 @@ namespace VaultUserCloudUpload
             this.label5 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dtGrdConvSettings = new System.Windows.Forms.DataGridView();
             this.TargetDrive = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.NativeFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.TargetFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.UploadDWF = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.label11 = new System.Windows.Forms.Label();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -148,6 +148,16 @@ namespace VaultUserCloudUpload
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "File Naming Convention";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.Location = new System.Drawing.Point(421, 16);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(114, 26);
+            this.label11.TabIndex = 6;
+            this.label11.Text = "Optional: Leave blank,\r\nif no suffix is needed.";
             // 
             // cmbSuffix2UDP
             // 
@@ -356,7 +366,6 @@ namespace VaultUserCloudUpload
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(643, 274);
             this.tabControl1.TabIndex = 7;
-            this.tabControl1.Visible = false;
             // 
             // tabPage1
             // 
@@ -370,6 +379,15 @@ namespace VaultUserCloudUpload
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mapping";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(635, 248);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "File Types";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
@@ -446,25 +464,6 @@ namespace VaultUserCloudUpload
             this.UploadDWF.ToolTipText = "Create and upload a DWF(x) file if Target Format is empty or in addition to a sel" +
     "ected target format.";
             this.UploadDWF.TrueValue = "true";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.BackColor = System.Drawing.Color.Transparent;
-            this.label11.Location = new System.Drawing.Point(421, 16);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(114, 26);
-            this.label11.TabIndex = 6;
-            this.label11.Text = "Optional: Leave blank,\r\nif no suffix is needed.";
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(635, 248);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "File Types";
-            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // AdminOptions
             // 

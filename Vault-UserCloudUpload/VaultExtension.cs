@@ -356,8 +356,7 @@ namespace VaultUserCloudUpload
         public void OnLogOn(IApplication application)
         {
             mConnection = application.Connection;
-            //toDo - replace by LoadFromVault
-            mSettings = Settings.Load();
+            mSettings = Settings.LoadFromVault(mConnection);
             mFldrPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
 
             //mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
