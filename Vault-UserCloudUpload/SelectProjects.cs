@@ -22,19 +22,23 @@ namespace VaultUserCloudUpload
 
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
-        public List<string> mEnabledDrives = null;
-        public List<string> mProjects = new List<string>();
+        public List<string> mProjects = new List<string>();  
 
         public SelectProjects()
         {
             InitializeComponent();
 
             mSettings = Settings.LoadFromVault(mConnection);
-            mEnabledDrives = mSettings.DriveTypes.ToList();
-            foreach (string item in mEnabledDrives)
+            VaultExtension.mEnabledDrives = mSettings.DriveTypes.ToList();
+            foreach (string item in VaultExtension.mEnabledDrives)
             {
                 item.Replace(" ", "");
             }
+
+            if (VaultExtension.mEnabledExtns == null)
+            {
+                VaultExtension.mEnabledExtns = VaultExtension.mGetDriveFileTypes();
+            }            
 
         }
 
@@ -42,7 +46,7 @@ namespace VaultUserCloudUpload
         private void btnRuleDirAdd_Click(object sender, EventArgs e)
         {
             string mAllowedDrives = "Autodesk ";
-            foreach (var item in mEnabledDrives)
+            foreach (var item in VaultExtension.mEnabledDrives)
             {
                 mAllowedDrives = mAllowedDrives + "| " + item;
             }
@@ -67,7 +71,7 @@ namespace VaultUserCloudUpload
                 mSelectedDrive = "Fusion";
             }
 
-            if (mSelectedDrive != null && mEnabledDrives.Contains(mSelectedDrive))
+            if (mSelectedDrive != null && VaultExtension.mEnabledDrives.Contains(mSelectedDrive))
             {
                 //check against individual restrictions per drive
                 string[] mSelectedPath = folderBrowserDialog1.SelectedPath.Split('\\');

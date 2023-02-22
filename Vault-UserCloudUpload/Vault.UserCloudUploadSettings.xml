@@ -4,7 +4,16 @@
   <VaultFolderCat>Project</VaultFolderCat>
   <CloudDrivePath>Cloud Drive Path</CloudDrivePath>
   <CloudPath>Cloud URL</CloudPath>
+  <DriveTypes>Drive</DriveTypes>
   <DriveTypes>Docs</DriveTypes>
-  <DriveConversionSettings>Autodesk Docs|*.IPT|*.RVT|True</DriveConversionSettings>
-  <DriveConversionSettings>Autodesk Docs|*.IAM|*.RVT|True</DriveConversionSettings>
+  <DriveTypes>Fusion</DriveTypes>
+  <EnabledFileFormats>Autodesk Docs|*.NWD|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Docs|*.RVT|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Docs|*.DWF, *.DWFx|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Docs|*.DWG|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Drive|*.PDF|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Fusion Team|*.PDF|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Fusion Team|*.STEP|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Fusion Team|*.IPT, *.IAM, *.IPN|</EnabledFileFormats>
+  <EnabledFileFormats>Autodesk Fusion Team|*.IDW, *.DWG|</EnabledFileFormats>
 </settings>

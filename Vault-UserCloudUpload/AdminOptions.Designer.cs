@@ -56,20 +56,17 @@ namespace VaultUserCloudUpload
             this.label5 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dtGrdConvSettings = new System.Windows.Forms.DataGridView();
+            this.dtGrdEnabledFileFrmts = new System.Windows.Forms.DataGridView();
             this.TargetDrive = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.NativeFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.TargetFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.UploadDWF = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.EnabledFormat = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dtGrdConvSettings)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dtGrdEnabledFileFrmts)).BeginInit();
             this.SuspendLayout();
             // 
             // btnExport
@@ -359,7 +356,6 @@ namespace VaultUserCloudUpload
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
@@ -380,40 +376,29 @@ namespace VaultUserCloudUpload
             this.tabPage1.Text = "Mapping";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(635, 248);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "File Types";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.dtGrdConvSettings);
+            this.tabPage2.Controls.Add(this.dtGrdEnabledFileFrmts);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(635, 248);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Conversion";
+            this.tabPage2.Text = "File Type Filter";
             this.tabPage2.ToolTipText = "Preview - Not implemented yet.";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // dtGrdConvSettings
+            // dtGrdEnabledFileFrmts
             // 
-            this.dtGrdConvSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dtGrdConvSettings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dtGrdEnabledFileFrmts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dtGrdEnabledFileFrmts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TargetDrive,
-            this.NativeFormat,
-            this.TargetFormat,
-            this.UploadDWF});
-            this.dtGrdConvSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dtGrdConvSettings.Location = new System.Drawing.Point(3, 3);
-            this.dtGrdConvSettings.Name = "dtGrdConvSettings";
-            this.dtGrdConvSettings.Size = new System.Drawing.Size(629, 242);
-            this.dtGrdConvSettings.TabIndex = 0;
+            this.EnabledFormat});
+            this.dtGrdEnabledFileFrmts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtGrdEnabledFileFrmts.Location = new System.Drawing.Point(3, 3);
+            this.dtGrdEnabledFileFrmts.Name = "dtGrdEnabledFileFrmts";
+            this.dtGrdEnabledFileFrmts.Size = new System.Drawing.Size(629, 242);
+            this.dtGrdEnabledFileFrmts.TabIndex = 0;
             // 
             // TargetDrive
             // 
@@ -427,43 +412,33 @@ namespace VaultUserCloudUpload
             this.TargetDrive.Name = "TargetDrive";
             this.TargetDrive.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
-            // NativeFormat
+            // EnabledFormat
             // 
-            this.NativeFormat.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.NativeFormat.FillWeight = 25F;
-            this.NativeFormat.HeaderText = "Native Format";
-            this.NativeFormat.Items.AddRange(new object[] {
+            this.EnabledFormat.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.EnabledFormat.FillWeight = 25F;
+            this.EnabledFormat.HeaderText = "Enabled Format";
+            this.EnabledFormat.Items.AddRange(new object[] {
+            "*.BMP",
+            "*.DWG",
+            "*.DWF, *.DWFx",
+            "*.IFC",
             "*.IPT",
             "*.IAM",
-            "*.IPT, *.IAM",
-            "*.IDW"});
-            this.NativeFormat.Name = "NativeFormat";
-            // 
-            // TargetFormat
-            // 
-            this.TargetFormat.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.TargetFormat.FillWeight = 20F;
-            this.TargetFormat.HeaderText = "Target Format";
-            this.TargetFormat.Items.AddRange(new object[] {
-            "*.RVT",
-            "*.IFC",
-            "*.DWG (3D)",
-            "*.STP",
+            "*.IPN",
+            "*.IPT, *.IAM, *.IPN",
+            "*.IDW",
+            "*.IDW, *.DWG",
+            "*.JPG, *.JPEG",
             "*.JT",
+            "*.NWD",
+            "*.NWC",
             "*.PDF",
-            "*.DWG (2D)"});
-            this.TargetFormat.Name = "TargetFormat";
-            // 
-            // UploadDWF
-            // 
-            this.UploadDWF.FalseValue = "false";
-            this.UploadDWF.FillWeight = 10F;
-            this.UploadDWF.HeaderText = "Upload DWF(x)";
-            this.UploadDWF.Name = "UploadDWF";
-            this.UploadDWF.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.UploadDWF.ToolTipText = "Create and upload a DWF(x) file if Target Format is empty or in addition to a sel" +
-    "ected target format.";
-            this.UploadDWF.TrueValue = "true";
+            "*.PNG",
+            "*.RVT",
+            "*.STEP",
+            "*.TIFF",
+            "*.X_T"});
+            this.EnabledFormat.Name = "EnabledFormat";
             // 
             // AdminOptions
             // 
@@ -489,7 +464,7 @@ namespace VaultUserCloudUpload
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dtGrdConvSettings)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dtGrdEnabledFileFrmts)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -520,15 +495,12 @@ namespace VaultUserCloudUpload
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.DataGridView dtGrdConvSettings;
-        private System.Windows.Forms.DataGridViewComboBoxColumn TargetDrive;
-        private System.Windows.Forms.DataGridViewComboBoxColumn NativeFormat;
-        private System.Windows.Forms.DataGridViewComboBoxColumn TargetFormat;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn UploadDWF;
+        private System.Windows.Forms.DataGridView dtGrdEnabledFileFrmts;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox cmbFldCategory;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.DataGridViewComboBoxColumn TargetDrive;
+        private System.Windows.Forms.DataGridViewComboBoxColumn EnabledFormat;
     }
 }

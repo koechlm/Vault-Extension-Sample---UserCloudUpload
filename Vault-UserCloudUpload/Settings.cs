@@ -36,8 +36,8 @@ namespace VaultUserCloudUpload
         [XmlElement("DriveTypes")]
         public string[] DriveTypes;
 
-        [XmlElement("DriveConversionSettings")]
-        public string[] DriveConversionSettings;
+        [XmlElement("EnabledFileFormats")]
+        public string[] EnabledFileFormats;
 
 
         public Settings()

@@ -60,7 +60,7 @@ namespace VaultUserCloudUpload
             this.dtGrdUploadFiles.ReadOnly = true;
             this.dtGrdUploadFiles.Size = new System.Drawing.Size(881, 359);
             this.dtGrdUploadFiles.TabIndex = 0;
-            this.dtGrdUploadFiles.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dtGrdUploadFiles_RowsAdded);
+            //this.dtGrdUploadFiles.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dtGrdUploadFiles_RowsAdded);
             this.dtGrdUploadFiles.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dtGrdUploadFiles_UserDeletedRow);
             // 
             // Upload

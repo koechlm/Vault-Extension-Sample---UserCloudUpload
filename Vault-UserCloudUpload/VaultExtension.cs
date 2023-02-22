@@ -27,6 +27,8 @@ namespace VaultUserCloudUpload
         public static List<string> mFldrPropNames = new List<string>();
         public static List<string> mFilePropDispNames = new List<string>();
         public static List<string> mFldrCatNames = new List<string>();
+        public static List<string> mEnabledDrives = null;
+        public static Dictionary<string, List<string>> mEnabledExtns = null;
         //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
         //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
 
@@ -133,6 +135,35 @@ namespace VaultUserCloudUpload
             return mCatNames;
         }
 
+        public static Dictionary<string, List<string>> mGetDriveFileTypes()
+        {
+            Dictionary<string, List<string>> mDriveFileTypes = new Dictionary<string, List<string>>();
+
+            mSettings = Settings.LoadFromVault(mConnection);
+            string mDrive = null;
+            string mExtns = null;
+            List<string> mExtensions = new List<string>();
+
+            foreach (var item in mSettings.EnabledFileFormats)
+            {
+                mDrive = item.Split('|')[0];
+                mExtns = item.Split('|')[1].Replace(" ", "").Replace("*", "");
+
+                if (mDriveFileTypes.TryGetValue(mDrive, out mExtensions))
+                {   //existing key|value pair -> add the new values
+                    mExtensions = mExtns.Split(',').ToList();
+                    mDriveFileTypes[mDrive].AddRange(mExtensions);
+                }
+                else
+                {   //new key|value pair -> add new key and value
+                    mExtensions = mExtns.Split(',').ToList();
+                    mDriveFileTypes.Add(mDrive, mExtensions);
+                }
+            }
+
+            return mDriveFileTypes;
+        }
+
         private void mUploadToCloudProjectCmd_Execute(object sender, CommandItemEventArgs e)
         {
             //id collection of files to process
@@ -155,7 +186,6 @@ namespace VaultUserCloudUpload
             if (dialogResult == DialogResult.OK)
             {
                 //download files iterating the AcquireList
-                //download files iterating the AcquireList
                 foreach (var downloadpackage in mAcquireDict)
                 {
                     VDF.Vault.Results.AcquireFilesResults results = mConnection.FileManager.AcquireFiles(downloadpackage.Value);
@@ -174,6 +204,8 @@ namespace VaultUserCloudUpload
             settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout;
             settings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download;
             settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeChildren = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeParents = true;
+            settings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseParents = true;
             settings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseChildren = true;
             settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeAttachments = true;
             settings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeLibraryContents = true;

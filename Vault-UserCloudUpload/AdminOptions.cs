@@ -59,14 +59,14 @@ namespace VaultUserCloudUpload
                 cmbCloudDrivePathUDP.Text = mNewSettings.CloudDrivePath;
                 cmbCloudDriveUrlUDP.Text = mNewSettings.CloudPath;
 
-                //Conversion Tab
-                mUpdateDrvConfSettingsGrid(mNewSettings.DriveConversionSettings);
+                //Enabled File Types Tab
+                mUpdateDrvConfSettingsGrid(mNewSettings.EnabledFileFormats);
 
                 mVaultSettingsLoaded = true;
             }
             catch (Exception)
             {
-                VDF.Forms.Library.ShowError("An error occurred while loading settings from Vault.\n\r\n\rCheck folder read permissions. Or the setting file's content.", "Configuration Import");
+                VDF.Forms.Library.ShowError("An error occurred while reading settings from local file.\n\r\n\rCheck folder read permissions. Or the setting file's content.", "Configuration Import");
             }
         }
 
@@ -80,7 +80,7 @@ namespace VaultUserCloudUpload
             mActiveSettings.CloudDrivePath = cmbCloudDrivePathUDP.Text;
             mActiveSettings.CloudPath = cmbCloudDriveUrlUDP.Text;
             //Conversion tab
-            mActiveSettings.DriveConversionSettings = mGetDrvConvSettings();
+            mActiveSettings.EnabledFileFormats = mGetEnabledFileFrmtsSettings();
 
             bool mExpSuccess = mActiveSettings.Save();
             if (mExpSuccess == true)
@@ -113,27 +113,25 @@ namespace VaultUserCloudUpload
             return mDrvTypes;
         }
 
-        private string[] mGetDrvConvSettings()
+        private string[] mGetEnabledFileFrmtsSettings()
         {
-            string[] mDrvConfSettings = new string[dtGrdConvSettings.RowCount];
+            string[] mDrvFileSettings = new string[dtGrdEnabledFileFrmts.RowCount];
 
-            for (int i = 0; i < dtGrdConvSettings.Rows.Count; i++)
+            for (int i = 0; i < dtGrdEnabledFileFrmts.Rows.Count; i++)
             {
-                if (dtGrdConvSettings.Rows[i].Cells[0].Value != null)
+                if (dtGrdEnabledFileFrmts.Rows[i].Cells[0].Value != null)
                 {
-                    mDrvConfSettings[i] = dtGrdConvSettings.Rows[i].Cells[0].Value.ToString() + "|"
-                        + dtGrdConvSettings.Rows[i].Cells[1].Value.ToString() + "|"
-                        + dtGrdConvSettings.Rows[i].Cells[2].Value.ToString() + "|"
-                        + dtGrdConvSettings.Rows[i].Cells[3].EditedFormattedValue;
+                    mDrvFileSettings[i] = dtGrdEnabledFileFrmts.Rows[i].Cells[0].Value.ToString() + "|"
+                        + dtGrdEnabledFileFrmts.Rows[i].Cells[1].Value.ToString() + "|";
                 }
             }
-            return mDrvConfSettings;
+            return mDrvFileSettings;
         }
 
         private void mUpdateDrvConfSettingsGrid(string[] mDrvConfSettings)
         {
             //clear existing Data
-            dtGrdConvSettings.Rows.Clear();
+            dtGrdEnabledFileFrmts.Rows.Clear();
             //write settings
             if (mDrvConfSettings != null)
             {
@@ -141,11 +139,9 @@ namespace VaultUserCloudUpload
                 for (int i = 0; i < mDrvConfSettings.Count(); i++)
                 {
                     mRow = mDrvConfSettings[i].Split('|');
-                    dtGrdConvSettings.Rows.Add();
-                    dtGrdConvSettings.Rows[i].Cells[0].Value = mRow[0];
-                    dtGrdConvSettings.Rows[i].Cells[1].Value = mRow[1];
-                    dtGrdConvSettings.Rows[i].Cells[2].Value = mRow[2];
-                    dtGrdConvSettings.Rows[i].Cells[3].Value = mRow[3];
+                    dtGrdEnabledFileFrmts.Rows.Add();
+                    dtGrdEnabledFileFrmts.Rows[i].Cells[0].Value = mRow[0];
+                    dtGrdEnabledFileFrmts.Rows[i].Cells[1].Value = mRow[1];
                 }
             }
         }
@@ -194,8 +190,8 @@ namespace VaultUserCloudUpload
                 cmbCloudDrivePathUDP.Text = mNewSettings.CloudDrivePath;
                 cmbCloudDriveUrlUDP.Text = mNewSettings.CloudPath;
 
-                //Conversion Tab
-                mUpdateDrvConfSettingsGrid(mNewSettings.DriveConversionSettings);
+                //Enbled File Types Tab
+                mUpdateDrvConfSettingsGrid(mNewSettings.EnabledFileFormats);
 
                 mVaultSettingsLoaded = true;
             }
@@ -214,17 +210,17 @@ namespace VaultUserCloudUpload
             mActiveSettings.VaultFolderCat = cmbFldCategory.Text;
             mActiveSettings.CloudDrivePath = cmbCloudDrivePathUDP.Text;
             mActiveSettings.CloudPath = cmbCloudDriveUrlUDP.Text;
-            //Conversion tab
-            mActiveSettings.DriveConversionSettings = mGetDrvConvSettings();
+            //Enabled File Types tab
+            mActiveSettings.EnabledFileFormats = mGetEnabledFileFrmtsSettings();
 
             bool mExpSuccess = mActiveSettings.SaveToVault(VaultExtension.mConnection);
             if (mExpSuccess == true)
             {
-                VDF.Forms.Library.ShowMessage("Successfully exported settings to local file.", "Save Configuration", VDF.Forms.Currency.ButtonConfiguration.Ok);
+                VDF.Forms.Library.ShowMessage("Successfully stored settings in Vault.", "Save Configuration", VDF.Forms.Currency.ButtonConfiguration.Ok);
             }
             else
             {
-                VDF.Forms.Library.ShowError("Export settings to local file failed. Check the permissions Vault Extensions folder.", "Save Configuration");
+                VDF.Forms.Library.ShowError("Saving settings to Vault failed.", "Save Configuration");
             }
         }
 

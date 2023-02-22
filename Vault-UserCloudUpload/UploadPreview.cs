@@ -27,12 +27,23 @@ namespace VaultUserCloudUpload
             InitializeComponent();
 
             mSettings = Settings.LoadFromVault(mConnection);
+            
+            VaultExtension.mEnabledDrives = mSettings.DriveTypes.ToList();
+            foreach (string item in VaultExtension.mEnabledDrives)
+            {
+                item.Replace(" ", "");
+            }
+            string mAllowedDrives = "Autodesk ";
+            foreach (var item in VaultExtension.mEnabledDrives)
+            {
+                mAllowedDrives = mAllowedDrives + "| " + item;
+            }
+
             string mNameSuffix1 = mSettings.FileNameSuffixies.Split(',').FirstOrDefault().TrimEnd();
             string mNameSuffix2 = mSettings.FileNameSuffixies.Split(',').Last().TrimStart();
 
             //Get the property definitions for FILE and FLDR
             ACW.PropDef[] mFilePropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FILE");
-            //ACW.PropDef[] mFolderPropDefs = mConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FLDR");
             ACW.PropDef[] mFolderPropDefs = VaultUserCloudUpload.VaultExtension.mFldrPropDefs;
 
             long mSuffixId1 = mFilePropDefs.Where(n => n.DispName == mNameSuffix1).FirstOrDefault().Id;
@@ -57,6 +68,7 @@ namespace VaultUserCloudUpload
 
                 //preset error handling for each file
                 bool mValidPath = false;
+                bool mValidFileExt = false;
 
                 //get the property instances of the individual file
                 IEnumerable<ACW.PropInst> mFilePropInsts = mAllFilesPropInsts.Where(n => n.EntityId == mFile.Id);
@@ -123,24 +135,37 @@ namespace VaultUserCloudUpload
 
                             if ((mPath + "\\" + mUploadFileName).ToString().Length > 256)
                             {
-                                mRestrictionText = "Error - The resulting file name and path exceeds 256 characters.";
+                                mRestrictionText = "The resulting file name and path exceeds 256 characters.";
                             }
-                            else
+                            else //file path length < 256
                             {
-                                btnUpload.Enabled = true;
-                                //add the individual file and its target download path to the AcquisitionOptions
-                                VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
-                                VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
+                                // check that the current file's extension is listed for the cloud drive found
+                                mValidFileExt = mCheckValidFileExt(mCldDrvPath, mFileExt);
+                                if (mValidFileExt == false)
+                                {
+                                    mRestrictionText = "File Extension " + mFileExt + " is not enabled for the target drive";
+                                    mValidFileExt = false;
+                                }
+                                else
+                                {
+                                    //add the individual file and its target download path to the AcquisitionOptions
+                                    VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
+                                    VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
 
-                                //the current file shares to 1 to n projects; this requires individual acquire packages for each target
-                                mAcquireSettings = VaultExtension.CreateAcquireSettings();
-                                mKey = mFile.MasterId.ToString() + mLocalPath.ToString();
-                                mAcquireDict.Add(mKey, mAcquireSettings);
-                                mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                                    //the current file shares to 1 to n projects; this requires individual acquire packages for each target
+                                    mAcquireSettings = VaultExtension.CreateAcquireSettings();
+                                    mKey = mFile.MasterId.ToString() + mLocalPath.ToString();
+                                    mAcquireDict.Add(mKey, mAcquireSettings);
+                                    mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                                }
                             }
 
-                            //add the files to the preview list and mark an error if the target path or filename is not validated successfully
-                            if (mValidPath == false)
+                            //add the files to the preview list and mark an error if the target path or file is not validated successfully
+                            if (string.IsNullOrEmpty(mSubFldr) != true)
+                            {
+                                mCldDrvPath = mCldDrvPath + mSubFldr;
+                            }
+                            if (mValidPath == false || mValidFileExt == false)
                             {
                                 dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);
                                 dtGrdUploadFiles.Rows[dtGrdUploadFiles.RowCount - 1].ErrorText = "File will not upload";
@@ -153,7 +178,7 @@ namespace VaultUserCloudUpload
                         }
                     }
                 }
-                else
+                else //configured or corresponding(=matching names) projects
                 {
                     if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
                     {
@@ -181,7 +206,6 @@ namespace VaultUserCloudUpload
 
                         mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + mFldrPropInsts.Where(n => n.PropDefId == mCldDrvPropId).FirstOrDefault().Val.ToString();
                         mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
-                        btnUpload.Enabled = true;
 
                         //grab the subfolder tree from project to the file's parent
                         mSubFldr = mFolder.FullName.Replace(mMappedFldr.FullName, "").Replace("/", "\\");
@@ -189,14 +213,8 @@ namespace VaultUserCloudUpload
                         //try to find a corresponding mapped drive project name
                         if (mValidPath != true)
                         {
-                            List<string> mEnabledDrives = mSettings.DriveTypes.ToList();
-                            foreach (string item in mEnabledDrives)
-                            {
-                                item.TrimEnd().TrimStart();
-                            }
-
                             //try to find an corresponding (Vault project name == cloud project name) download folder on ADocs or Fusion Team
-                            if (mEnabledDrives.Contains("Drive"))
+                            if (VaultExtension.mEnabledDrives.Contains("Drive"))
                             {
                                 mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs\\" + mMappedFldr.Name + "\\Project Files";
                                 mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
@@ -205,7 +223,7 @@ namespace VaultUserCloudUpload
                                     mCldDrvPath = mCldDrvPath + mSubFldr;
                                 }
                             }
-                            if (mValidPath != true && mEnabledDrives.Contains("Fusion"))
+                            if (mValidPath != true && VaultExtension.mEnabledDrives.Contains("Fusion"))
                             {
                                 mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion\\" + mMappedFldr.Name;
                                 mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
@@ -221,30 +239,73 @@ namespace VaultUserCloudUpload
                                 mRestrictionText = "Could not find corresponding or registered cloud project";
                             }
                         }
-                        else
+                        else //mValidPath == true
                         {
-                            //add the individual file and its target download path to the AcquisitionOptions
-                            mAcquireSettings = VaultExtension.CreateAcquireSettings();
-                            mAcquireDict.Add(mKey, mAcquireSettings);
-                            if (string.IsNullOrEmpty(mSubFldr) != true)
+                            //check the selection against configured/allowed cloud drives
+                            string mSelectedDrive = null;
+                            if (mCldDrvPath.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ADrive"))
                             {
-                                mCldDrvPath = mCldDrvPath + mSubFldr;
+                                mSelectedDrive = "Drive";
                             }
-                            VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
-                            VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
-                            mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                            if (mCldDrvPath.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs"))
+                            {
+                                mSelectedDrive = "Docs";
+                            }
+                            if (mCldDrvPath.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion"))
+                            {
+                                mSelectedDrive = "Fusion";
+                            }
 
-                        }
+                            if (mSelectedDrive != null && VaultExtension.mEnabledDrives.Contains(mSelectedDrive))
+                            {
+                                if ((mCldDrvPath + "\\" + mUploadFileName).ToString().Length > 256)
+                                {
+                                    mRestrictionText = "The resulting file name and path exceeds 256 characters.";
+                                }
+                                else //file path length < 256
+                                {
+                                    // check that the current file's extension is listed for the cloud drive found
+                                    mValidFileExt = mCheckValidFileExt(mCldDrvPath, mFileExt);
+                                    if (mValidFileExt == false)
+                                    {
+                                        mRestrictionText = "File Extension " + mFileExt + " is not enabled for the target drive";
+                                    }
+                                    else
+                                    {
+                                        //add the individual file and its target download path to the AcquisitionOptions
+                                        mAcquireSettings = VaultExtension.CreateAcquireSettings();
+                                        mAcquireDict.Add(mKey, mAcquireSettings);
+                                        if (string.IsNullOrEmpty(mSubFldr) != true)
+                                        {
+                                            mCldDrvPath = mCldDrvPath + mSubFldr;
+                                        }
+                                        VDF.Vault.Currency.Entities.FileIteration mFileIt = new VDF.Vault.Currency.Entities.FileIteration(mConnection, mFile);
+                                        VDF.Currency.FilePathAbsolute mLocalPath = new VDF.Currency.FilePathAbsolute(mCldDrvPath + "\\" + mUploadFileName);
+                                        mAcquireDict[mKey].AddFileToAcquire(mFileIt, mAcquireDict[mKey].DefaultAcquisitionOption, mLocalPath);
+                                    }
+                                } //file path length < 256
+                            }
+                            else
+                            {
+                                mValidPath = false;
+                                mRestrictionText = "Selection does not match with an allowed cloud drive of " + mAllowedDrives;
+                            }
 
+                        } //mValidPath == true
                     }
                     else //neither configured nor corresponding project found; file will not download - set an error on this row below
                     {
                         mCldDrvPath = "";
+                        //mValidPath default value = false
                         mRestrictionText = "Could not find corresponding or registered cloud project";
                     }
 
-                    //add the files to the preview list and mark an error if the target path or filename is not validated successfully
-                    if (mValidPath == false)
+                    //add the files to the preview list and mark an error if the target path or file is not validated successfully
+                    if (string.IsNullOrEmpty(mSubFldr) != true)
+                    {
+                        mCldDrvPath = mCldDrvPath + mSubFldr;
+                    }
+                    if (mValidPath == false || mValidFileExt == false)
                     {
                         dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);
                         dtGrdUploadFiles.Rows[dtGrdUploadFiles.RowCount - 1].ErrorText = "File will not upload";
@@ -256,11 +317,44 @@ namespace VaultUserCloudUpload
 
                 } //configured or corresponding projects
 
+            } //mFile in mFilesToUpload
 
+            if (mAcquireDict.Count > 0)
+            {
+                btnUpload.Enabled = true;
             }
 
-        }
+        } // end of UploadPreview
 
+
+        private bool mCheckValidFileExt(string path, string ext)
+        {
+
+            if (VaultExtension.mEnabledExtns == null)
+            {
+                VaultExtension.mEnabledExtns = VaultExtension.mGetDriveFileTypes();
+            }
+
+            string mSelectedDrive = null;
+            if (path.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ADrive"))
+            {
+                mSelectedDrive = "Autodesk Drive";
+            }
+            if (path.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs"))
+            {
+                mSelectedDrive = "Autodesk Docs";
+            }
+            if (path.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Fusion"))
+            {
+                mSelectedDrive = "Autodesk Fusion Team";
+            }
+
+            if (VaultExtension.mEnabledExtns[mSelectedDrive].Contains(ext.ToUpper()))
+            {
+                return true;
+            }
+            return false;
+        }
 
         private void btnUpload_MouseClick(object sender, MouseEventArgs e)
         {
@@ -286,9 +380,9 @@ namespace VaultUserCloudUpload
             }
         }
 
-        private void dtGrdUploadFiles_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            btnUpload.Enabled = true;
-        }
+        //private void dtGrdUploadFiles_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        //{
+        //    btnUpload.Enabled = true;
+        //}
     }
 }
