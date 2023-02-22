@@ -187,6 +187,7 @@ namespace VaultUserCloudUpload
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            mProjects = null; //reset the list of projects as a user might restart the selection
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
