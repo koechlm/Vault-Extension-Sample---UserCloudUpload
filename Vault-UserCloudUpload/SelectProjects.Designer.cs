@@ -31,16 +31,16 @@ namespace VaultUserCloudUpload
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectProjects));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnContinue = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnRuleDirAdd = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.clmIcon = new System.Windows.Forms.DataGridViewImageColumn();
             this.clmType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnRuleDirAdd = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,28 +92,12 @@ namespace VaultUserCloudUpload
             this.dataGridView1.Size = new System.Drawing.Size(610, 180);
             this.dataGridView1.TabIndex = 3;
             // 
-            // btnRuleDirAdd
-            // 
-            this.btnRuleDirAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRuleDirAdd.Image = ((System.Drawing.Image)(resources.GetObject("btnRuleDirAdd.Image")));
-            this.btnRuleDirAdd.Location = new System.Drawing.Point(628, 12);
-            this.btnRuleDirAdd.Name = "btnRuleDirAdd";
-            this.btnRuleDirAdd.Size = new System.Drawing.Size(26, 26);
-            this.btnRuleDirAdd.TabIndex = 4;
-            this.btnRuleDirAdd.UseVisualStyleBackColor = true;
-            this.btnRuleDirAdd.Click += new System.EventHandler(this.btnRuleDirAdd_Click);
-            // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
-            // 
             // clmIcon
             // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle5.NullValue")));
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.White;
-            this.clmIcon.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle1.NullValue")));
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White;
+            this.clmIcon.DefaultCellStyle = dataGridViewCellStyle1;
             this.clmIcon.HeaderText = "";
             this.clmIcon.Name = "clmIcon";
             this.clmIcon.ReadOnly = true;
@@ -137,6 +121,22 @@ namespace VaultUserCloudUpload
             this.colPath.Name = "colPath";
             this.colPath.ReadOnly = true;
             // 
+            // btnRuleDirAdd
+            // 
+            this.btnRuleDirAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRuleDirAdd.Image = ((System.Drawing.Image)(resources.GetObject("btnRuleDirAdd.Image")));
+            this.btnRuleDirAdd.Location = new System.Drawing.Point(628, 12);
+            this.btnRuleDirAdd.Name = "btnRuleDirAdd";
+            this.btnRuleDirAdd.Size = new System.Drawing.Size(26, 26);
+            this.btnRuleDirAdd.TabIndex = 4;
+            this.btnRuleDirAdd.UseVisualStyleBackColor = true;
+            this.btnRuleDirAdd.Click += new System.EventHandler(this.btnRuleDirAdd_Click);
+            // 
+            // folderBrowserDialog1
+            // 
+            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
+            // 
             // SelectProjects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -148,7 +148,7 @@ namespace VaultUserCloudUpload
             this.Controls.Add(this.btnContinue);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SelectProjects";
-            this.Text = "SelectProjects";
+            this.Text = "Select Cloud Drive Projects...";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
