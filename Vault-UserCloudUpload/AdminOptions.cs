@@ -217,6 +217,8 @@ namespace VaultUserCloudUpload
             if (mExpSuccess == true)
             {
                 VDF.Forms.Library.ShowMessage("Successfully stored settings in Vault.", "Save Configuration", VDF.Forms.Currency.ButtonConfiguration.Ok);
+                //update the file type filter settings
+                VaultExtension.mEnabledExtns = VaultExtension.mGetDriveFileTypes();
             }
             else
             {
