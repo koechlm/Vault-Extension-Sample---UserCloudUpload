@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupVault2CUup", "SetupVault2CUup\SetupVault2CUup.vdproj", "{83001161-8D20-4E62-9AA0-8BBB38AA8674}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,12 +22,17 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|x64.ActiveCfg = Debug|x64
-		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|x64.Build.0 = Debug|x64
+		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|x64.ActiveCfg = Release|x64
+		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Debug|x64.Build.0 = Release|x64
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Release|x64.ActiveCfg = Release|x64
 		{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}.Release|x64.Build.0 = Release|x64
+		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Debug|Any CPU.ActiveCfg = Debug
+		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Debug|x64.ActiveCfg = Release
+		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|Any CPU.ActiveCfg = Release
+		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|x64.ActiveCfg = Release
+		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|x64.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
