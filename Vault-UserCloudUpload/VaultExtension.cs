@@ -11,7 +11,7 @@ using VDF = Autodesk.DataManagement.Client.Framework;
 using Autodesk.Connectivity.Explorer.Extensibility;
 using Autodesk.Connectivity.Extensibility.Framework;
 
-[assembly: ApiVersion("15.0")]
+[assembly: ApiVersion("16.0")]
 [assembly: ExtensionId("6b8d6d58-b035-49ce-95d7-abdebb0404e1")]
 
 namespace VaultUserCloudUpload

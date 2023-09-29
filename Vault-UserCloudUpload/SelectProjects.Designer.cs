@@ -148,7 +148,7 @@ namespace VaultUserCloudUpload
             this.Controls.Add(this.btnContinue);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SelectProjects";
-            this.Text = "Select Cloud Drive Projects...";
+            this.Text = "Vault-2-Cloud -- Sample Application | Select Cloud Drive Projects...";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 

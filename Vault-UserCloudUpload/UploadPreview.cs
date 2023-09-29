@@ -27,7 +27,7 @@ namespace VaultUserCloudUpload
             InitializeComponent();
 
             mSettings = Settings.LoadFromVault(mConnection);
-            
+
             VaultExtension.mEnabledDrives = mSettings.DriveTypes.ToList();
             foreach (string item in VaultExtension.mEnabledDrives)
             {
@@ -80,29 +80,29 @@ namespace VaultUserCloudUpload
                 string mSuffix1 = null;
                 string mSuffix2 = null;
                 string mRestrictionText = null;
-                var temp1 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId1).FirstOrDefault().Val;
-                if (temp1 is null)
+                ACW.PropInst mPrpInst1 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId1).FirstOrDefault();
+                if (mPrpInst1 is null)
                 {
                     mSuffix1 = String.Format("[{0}]", mNameSuffix1);
                     mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
                 }
                 else
                 {
-                    mSuffix1 = temp1.ToString();
+                    mSuffix1 = mPrpInst1.Val.ToString();
                     //remove characters not allowed for filenames
                     mSuffix1 = String.Format("{0}", Regex.Replace(mSuffix1, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
                 }
                 mFileName = mFileName + "-" + mSuffix1;
 
-                var temp2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault().Val;
-                if (temp2 is null)
+                ACW.PropInst mPrpInst2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault();
+                if (mPrpInst2 is null)
                 {
                     mSuffix2 = String.Format("[{0}]", mNameSuffix2);
                     mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
                 }
                 else
                 {
-                    mSuffix2 = temp2.ToString();
+                    mSuffix2 = mPrpInst2.Val.ToString();
                     //remove characters not allowed for filenames
                     mSuffix2 = String.Format("{0}", Regex.Replace(mSuffix2, @"[\/?:*""><|]+", "", RegexOptions.Compiled));
                 }
@@ -216,6 +216,15 @@ namespace VaultUserCloudUpload
                             //try to find an corresponding (Vault project name == cloud project name) download folder on ADocs or Fusion Team
                             if (VaultExtension.mEnabledDrives.Contains("Drive"))
                             {
+                                mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ADrive\\" + mMappedFldr.Name + "\\Project Files";
+                                mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
+                                if (string.IsNullOrEmpty(mSubFldr) != true)
+                                {
+                                    mCldDrvPath = mCldDrvPath + mSubFldr;
+                                }
+                            }
+                            if (VaultExtension.mEnabledDrives.Contains("Docs"))
+                            {
                                 mCldDrvPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\ACCDocs\\" + mMappedFldr.Name + "\\Project Files";
                                 mValidPath = (new System.IO.DirectoryInfo(mCldDrvPath)).Exists;
                                 if (string.IsNullOrEmpty(mSubFldr) != true)
@@ -303,7 +312,7 @@ namespace VaultUserCloudUpload
                     //add the files to the preview list and mark an error if the target path or file is not validated successfully
                     if (string.IsNullOrEmpty(mSubFldr) != true)
                     {
-                        mCldDrvPath = mCldDrvPath + mSubFldr;
+                        mCldDrvPath = mCldDrvPath + mSubFldr';
                     }
                     if (mValidPath == false || mValidFileExt == false)
                     {

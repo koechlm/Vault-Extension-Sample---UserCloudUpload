@@ -453,7 +453,7 @@ namespace VaultUserCloudUpload
             this.Controls.Add(this.btnExport);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AdminOptions";
-            this.Text = "AdminOptions";
+            this.Text = "Vault-2-Cloud -- Sample Application | Admin Options";
             this.Load += new System.EventHandler(this.AdminOptions_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

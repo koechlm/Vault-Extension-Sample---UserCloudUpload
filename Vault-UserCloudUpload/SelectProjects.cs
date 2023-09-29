@@ -54,6 +54,7 @@ namespace VaultUserCloudUpload
             string mProjectName = null;
             folderBrowserDialog1.Description = "Select from " + mAllowedDrives + " ...";
             folderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer;
+            folderBrowserDialog1.ShowNewFolderButton = false;
             folderBrowserDialog1.ShowDialog();
 
             //check the selection against configured/allowed cloud drives
