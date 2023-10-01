@@ -17,7 +17,7 @@ using Vault = Autodesk.DataManagement.Client.Framework.Vault;
 
 namespace VaultUserCloudUpload
 {
-    public partial class UploadPreview : Form
+    public partial class UploadPreview : DevExpress.XtraEditors.XtraForm
     {
         public static Settings mSettings = null;
         private Vault.Currency.Connections.Connection mConnection = VaultUserCloudUpload.VaultExtension.mConnection;
@@ -81,7 +81,7 @@ namespace VaultUserCloudUpload
                 string mSuffix2 = null;
                 string mRestrictionText = null;
                 ACW.PropInst mPrpInst1 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId1).FirstOrDefault();
-                if (mPrpInst1 is null)
+                if (mPrpInst1 is null || mPrpInst1.Val is null || mPrpInst1.Val.ToString().IsNullOrEmpty())
                 {
                     mSuffix1 = String.Format("[{0}]", mNameSuffix1);
                     mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
@@ -95,7 +95,7 @@ namespace VaultUserCloudUpload
                 mFileName = mFileName + "-" + mSuffix1;
 
                 ACW.PropInst mPrpInst2 = mFilePropInsts.Where(n => n.PropDefId == mSuffixId2).FirstOrDefault();
-                if (mPrpInst2 is null)
+                if (mPrpInst2 is null || mPrpInst2.Val is null || mPrpInst2.Val.ToString().IsNullOrEmpty())
                 {
                     mSuffix2 = String.Format("[{0}]", mNameSuffix2);
                     mRestrictionText = "Warning - One of the file name suffixes misses a value; check the property marked with '[]'.";
@@ -186,16 +186,18 @@ namespace VaultUserCloudUpload
                     }
                     else
                     {
-                        if (mFolder.FullName != "$/")
+                        if (mFolder.FullName != "$")
                         {
+                            mTempFldr = mFolder;
                             do
                             {
-                                mTempFldr = mConnection.WebServiceManager.DocumentService.GetFolderById(mFolder.ParId);
+                                mTempFldr = mConnection.WebServiceManager.DocumentService.GetFolderById(mTempFldr.ParId);
                                 if (mTempFldr.Cat.CatName == mSettings.VaultFolderCat)
                                 {
                                     mMappedFldr = mTempFldr;
+                                    break;
                                 }
-                            } while (mMappedFldr != null && mTempFldr.FullName == "$");
+                            } while (mMappedFldr is null && mTempFldr.FullName != "$");
                         }
                     }
 
@@ -310,10 +312,10 @@ namespace VaultUserCloudUpload
                     }
 
                     //add the files to the preview list and mark an error if the target path or file is not validated successfully
-                    if (string.IsNullOrEmpty(mSubFldr) != true)
-                    {
-                        mCldDrvPath = mCldDrvPath + mSubFldr';
-                    }
+                    //if (string.IsNullOrEmpty(mSubFldr) != true)
+                    //{
+                    //    mCldDrvPath = mCldDrvPath + mSubFldr;
+                    //}
                     if (mValidPath == false || mValidFileExt == false)
                     {
                         dtGrdUploadFiles.Rows.Add(false, mUploadFileName, mCldDrvPath, mRestrictionText);

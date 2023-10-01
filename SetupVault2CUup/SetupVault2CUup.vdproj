@@ -231,7 +231,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_38B08874444C6FD1FCABA1E0716965EF"
+        "MsmKey" = "8:_36830F300DDB8F275DF34B5824A6C7B5"
         "OwnerKey" = "8:_9D17C2BD329F4D1F9E3C524155A8D5CD"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -245,12 +245,6 @@
         {
         "MsmKey" = "8:_420A3110713540ABB7CEE5F7CBAD54C6"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_466CBD4572EE6E2C5867301AB48CE6A4"
-        "OwnerKey" = "8:_9D17C2BD329F4D1F9E3C524155A8D5CD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -479,6 +473,12 @@
         {
         "MsmKey" = "8:_B1023EB0233646B2BDFA87332B5BAC70"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B3E6D44E6466A94D4AA76CCBC7252A87"
+        "OwnerKey" = "8:_9D17C2BD329F4D1F9E3C524155A8D5CD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -820,6 +820,24 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CBF759733648AE3558BA2481D9C2079E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7CF9D1210C3C0328AB379EAC3B8FE069"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1F1859094EE31A729B2CC4B24DDDF5A9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_9303409314E3D22AF6E1CABDB57BB870"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -922,6 +940,18 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_36830F300DDB8F275DF34B5824A6C7B5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B3E6D44E6466A94D4AA76CCBC7252A87"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0AE76F6453F96C92322236ED7D2B0334"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -971,36 +1001,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FF4A93647BF1F131E8B820DFB02CDF3C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CBF759733648AE3558BA2481D9C2079E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7CF9D1210C3C0328AB379EAC3B8FE069"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1F1859094EE31A729B2CC4B24DDDF5A9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_466CBD4572EE6E2C5867301AB48CE6A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_38B08874444C6FD1FCABA1E0716965EF"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1366,20 +1366,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_38B08874444C6FD1FCABA1E0716965EF"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_36830F300DDB8F275DF34B5824A6C7B5"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyAsmDisplayName" = "8:System.Windows, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_38B08874444C6FD1FCABA1E0716965EF"
+                    "_36830F300DDB8F275DF34B5824A6C7B5"
                     {
-                    "Name" = "8:System.Net.Http.dll"
+                    "Name" = "8:System.Windows.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Net.Http.dll"
+            "SourcePath" = "8:System.Windows.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_8C93CD9F7C684CD8812D7A593CBF2E62"
@@ -1435,37 +1435,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_466CBD4572EE6E2C5867301AB48CE6A4"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Windows, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-                "ScatterAssemblies"
-                {
-                    "_466CBD4572EE6E2C5867301AB48CE6A4"
-                    {
-                    "Name" = "8:System.Windows.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Windows.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_8C93CD9F7C684CD8812D7A593CBF2E62"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4F477DB9C2C33AF7414186AD6A256471"
@@ -1911,6 +1880,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B3E6D44E6466A94D4AA76CCBC7252A87"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+                "ScatterAssemblies"
+                {
+                    "_B3E6D44E6466A94D4AA76CCBC7252A87"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Net.Http.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_8C93CD9F7C684CD8812D7A593CBF2E62"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C1C999E82BEECA0394C0CC39D0E5DF62"
             {
             "AssemblyRegister" = "3:1"
@@ -2248,15 +2248,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Vault2Cloud-UserUpload"
-        "ProductCode" = "8:{15AF99DB-F8D3-470E-9ED4-A7115A06836E}"
-        "PackageCode" = "8:{B4873E0E-1E52-45DB-8FB4-D7C4393AE7CA}"
+        "ProductCode" = "8:{A20380E8-FA01-437D-878A-6E0F1ED0C3F8}"
+        "PackageCode" = "8:{E3D9BD34-E7CE-4F0C-837D-46CBA2C6584E}"
         "UpgradeCode" = "8:{03ABCD0D-B7EB-476C-837C-07BBC1D1D708}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.0.2023"
+        "ProductVersion" = "8:1.0.2023"
         "Manufacturer" = "8:Markus Koechl, Autodesk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/koechlm/Vault-Extension-Sample---UserCloudUpload"

@@ -145,7 +145,8 @@ namespace VaultUserCloudUpload
             this.Controls.Add(this.btnUploadCancel);
             this.Controls.Add(this.btnUpload);
             this.Controls.Add(this.dtGrdUploadFiles);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.IconOptions.Icon = ((System.Drawing.Icon)(resources.GetObject("UploadPreview.IconOptions.Icon")));
+            this.LookAndFeel.UseDefaultLookAndFeel = false;
             this.Name = "UploadPreview";
             this.Text = "Vault-2-Cloud -- Sample Application | Preview";
             ((System.ComponentModel.ISupportInitialize)(this.dtGrdUploadFiles)).EndInit();

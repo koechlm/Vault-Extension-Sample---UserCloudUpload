@@ -29,8 +29,7 @@ namespace VaultUserCloudUpload
         public static List<string> mFldrCatNames = new List<string>();
         public static List<string> mEnabledDrives = null;
         public static Dictionary<string, List<string>> mEnabledExtns = null;
-        //public List<ACW.File> mFilesToUpload = new List<ACW.File>();
-        //public bool mIsDarkTheme = VDF.Forms.SkinUtils.ThemeState.IsDarkTheme;
+        private string mCurrentTheme;
 
 
         IEnumerable<CommandSite> IExplorerExtension.CommandSites()
@@ -271,21 +270,24 @@ namespace VaultUserCloudUpload
             {
                 mConfigPerm = true;
                 AdminOptions mAdminWindow = new AdminOptions();
-                //if (mIsDarkTheme)
-                //{
-                //    //Autodesk.iLogic.ThemeSkins.CustomThemeSkins.Register();
-                //    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.DarkThemeName);
-                //    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_dark;
-                //}
-                //else
-                //{
-                //    mAdminWindow.LookAndFeel.SetSkinStyle(Autodesk.iLogic.ThemeSkins.CustomThemeSkins.LightThemeName);
-                //mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
-                //}
-                //if (Autodesk.DataManagement.Client.Framework.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme == VDF.Forms.SkinUtils.Theme.Default)
-                //{
-                //    mAdminWindow.LookAndFeel.SetOffice2003Style();
-                //}
+
+                mCurrentTheme = VDF.Forms.SkinUtils.WinFormsTheme.Instance.CurrentTheme.ToString();
+                if (mCurrentTheme == VDF.Forms.SkinUtils.Theme.Light.ToString())
+                {
+                    mAdminWindow.LookAndFeel.SetSkinStyle(VDF.Forms.SkinUtils.CustomThemeSkins.LightThemeName);
+                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_dark;
+                }
+
+                if (mCurrentTheme == VDF.Forms.SkinUtils.Theme.Dark.ToString())
+                {
+                    mAdminWindow.LookAndFeel.SetSkinStyle(VDF.Forms.SkinUtils.CustomThemeSkins.DarkThemeName);
+                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
+                }
+                if (mCurrentTheme == VDF.Forms.SkinUtils.Theme.Default.ToString())
+                {
+                    mAdminWindow.LookAndFeel.SetSkinStyle(VDF.Forms.SkinUtils.CustomThemeSkins.DefaultThemeName);
+                    mAdminWindow.IconOptions.Image = Properties.Resources.AdminOptionsImage_16_light;
+                }
 
                 mAdminWindow.ShowDialog();
             }
@@ -338,6 +340,24 @@ namespace VaultUserCloudUpload
                 try
                 {
                     long FolderId = e.Context.SelectedObject.Id;
+                    //check if the current folder is of configured mapped category; iterate parents if not
+                    ACW.Folder mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(FolderId);
+                    if (!(mFolder.Cat.CatName == mSettings.VaultFolderCat))
+                    {
+                        if (mFolder.FullName != "$")
+                        {
+                            do
+                            {
+                                mFolder = mConnection.WebServiceManager.DocumentService.GetFolderById(mFolder.ParId);
+                                if (mFolder.Cat.CatName == mSettings.VaultFolderCat)
+                                {
+                                    FolderId = mFolder.Id;
+                                    break;
+                                }
+                            } while (mFolder.FullName != "$");
+                        }
+                    }
+
                     //get the selected folder's property values
                     ACW.PropInst[] mSourcePropInsts = mConnection.WebServiceManager.PropertyService.GetPropertiesByEntityIds("FLDR", new long[] { FolderId });
                     string mPropDispName = mSettings.CloudPath;

@@ -12,7 +12,7 @@ using VDF = Autodesk.DataManagement.Client.Framework;
 
 namespace VaultUserCloudUpload
 {
-    public partial class AdminOptions : Form
+    public partial class AdminOptions : DevExpress.XtraEditors.XtraForm
     {
         private bool mVaultSettingsLoaded = false;
 
