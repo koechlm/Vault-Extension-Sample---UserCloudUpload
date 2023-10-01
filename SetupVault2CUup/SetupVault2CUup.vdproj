@@ -537,6 +537,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D2640DAE9DEE48738C88EFE8C389F1AD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DCBB7E2BF539FB080A74030B31C9E383"
         "OwnerKey" = "8:_8F2F48B5150AA2B96557DEA7B71B0EF8"
         "MsmSig" = "8:_UNDEFINED"
@@ -2004,6 +2010,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D2640DAE9DEE48738C88EFE8C389F1AD"
+            {
+            "SourcePath" = "8:..\\README.md"
+            "TargetName" = "8:README.md"
+            "Tag" = "8:"
+            "Folder" = "8:_8C93CD9F7C684CD8812D7A593CBF2E62"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DCBB7E2BF539FB080A74030B31C9E383"
             {
             "AssemblyRegister" = "3:1"
@@ -2248,15 +2274,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Vault2Cloud-UserUpload"
-        "ProductCode" = "8:{A20380E8-FA01-437D-878A-6E0F1ED0C3F8}"
-        "PackageCode" = "8:{E3D9BD34-E7CE-4F0C-837D-46CBA2C6584E}"
+        "ProductCode" = "8:{49E02B6A-7DE2-43E5-AEFC-61A672F24E39}"
+        "PackageCode" = "8:{D1613C0C-BAF1-4F8C-849C-25C25E5C9B1C}"
         "UpgradeCode" = "8:{03ABCD0D-B7EB-476C-837C-07BBC1D1D708}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.2023"
+        "ProductVersion" = "8:1.1.2023"
         "Manufacturer" = "8:Markus Koechl, Autodesk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/koechlm/Vault-Extension-Sample---UserCloudUpload"

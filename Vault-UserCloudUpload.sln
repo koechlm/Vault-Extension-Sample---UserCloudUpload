@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vault.UserCloudUpload", "Va
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{F87DEBC3-A423-45C7-849F-8CDB0AF74703}"
 	ProjectSection(SolutionItems) = preProject
+		Autodesk Vault-2-Cloud -- Sample Application Case Study.pdf = Autodesk Vault-2-Cloud -- Sample Application Case Study.pdf
+		Autodesk Vault-2-Cloud -- Sample Application Setup.pdf = Autodesk Vault-2-Cloud -- Sample Application Setup.pdf
 		README.md = README.md
 	EndProjectSection
 EndProject
