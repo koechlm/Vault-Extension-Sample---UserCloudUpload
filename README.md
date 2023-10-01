@@ -52,5 +52,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---------------------------------
 Data and Privacy
-Using Microsoft.Web.WebView2 includes Microsoft Defender SmartScreen, and collects and sends the user’s information to Microsoft as disclosed in Microsoft Privacy Statement and the Microsoft Edge Privacy Whitepaper2
+Using Microsoft.Web.WebView2 includes Microsoft Defender SmartScreen, and collects and sends the userâ€™s information to Microsoft as disclosed in Microsoft Privacy Statement and the Microsoft Edge Privacy Whitepaper2
 https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/data-privacy
