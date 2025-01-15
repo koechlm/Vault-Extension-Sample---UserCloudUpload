@@ -1,0 +1,415 @@
+﻿AddReference "QuickstartiLogicLibrary.dll"
+AddReference "System.XML"
+Imports System.Xml
+Sub main
+
+	'initialize user parameters
+	Try
+		mParamCheck = Parameter("RVTPresets")
+	Catch
+		iLogicVb.Automation.ParametersXmlLoad(ThisDoc.Document, iLogicVb.Automation.FileOptions.AddinDirectory + "\RVT_Export-params.xml")
+	End Try
+
+	Break
+
+	'create an Inventor progress bar - the export may take time ;)
+	Dim mProgress As Inventor.ProgressBar
+	Dim mProgStepsAll As Integer = 4
+	Dim mProgStep As Integer = 1
+	mProgress = ThisApplication.CreateProgressBar(False, mProgStepsAll, "Revit Export | Vault Attachment", False)
+	mProgress.Message = "Preparing export... " & " Phase " & mProgStep & " of " & mProgStepsAll
+	mProgress.UpdateProgress
+
+	Dim mDoc As AssemblyDocument
+	mDoc = ThisApplication.ActiveDocument
+	If mDoc.DocumentType <> Inventor.DocumentTypeEnum.kAssemblyDocumentObject Then
+		Logger.Error("This sample rule expects an assembly document.")
+		'don't forget to close the Progess Bar
+		mProgress.Close
+		Exit Sub
+	End If
+
+	' Activate the Master model state if the active model state is substitute.
+	If mDoc.ComponentDefinition.ModelStates.ActiveModelState.ModelStateType = ModelStateTypeEnum.kSubstituteModelStateType Then
+		mDoc.ComponentDefinition.ModelStates.Item(1).Activate
+		mDoc = ThisApplication.ActiveDocument
+	End If
+
+	'check existing export definition
+	Dim mRvtExport As Inventor.RevitExport
+	Dim mRvtExpDef As RevitExportDefinition
+	Dim mNewExp As Boolean = False
+	Dim mExpName As String = ThisDoc.FileName(True).Replace(".iam", ".rvt")
+	Dim mExpFullName As String
+
+	For Each item As RevitExport In mDoc.ComponentDefinition.RevitExports
+		If item.Name = mExpName Then
+			mRvtExport = item
+			mRvtExpDef = item.Definition
+			mExpFullName = item.FullFileName
+		End If
+	Next
+
+	'create new definition in case it does not exist
+	If mRvtExpDef Is Nothing Then
+		mNewExp = True
+
+		'Read presets
+		Dim mPresets As New System.Collections.Generic.Dictionary(Of String, System.Collections.Generic.Dictionary(Of String, String))
+		Dim mPrstsObjMap As System.Collections.Generic.Dictionary(Of String, Object)
+		mPresets = mReadRvtPresets
+		mPrstsObjMap = mReadPresetMap
+
+		'initialize user input and options
+		Dim FrmResult As Autodesk.iLogic.Interfaces.FormReturnValue = iLogicForm.ShowGlobal("Revit Export Automation", FormMode.Modal)
+		Select Case FrmResult.Result.ToString
+			Case "Cancel"
+				'don't forget to close the Progess Bar
+				mProgress.Close
+				Exit Sub
+			Case "None"
+				'don't forget to close the Progess Bar
+				mProgress.Close
+				Exit Sub
+		End Select
+
+		mExpFullName = Parameter("RVT_Path") + mExpName
+
+		mRvtExpDef = mDoc.ComponentDefinition.RevitExports.CreateDefinition
+		'derive file name from source
+		mRvtExpDef.Location = Parameter("RVT_Path")
+		mRvtExpDef.FileName = mExpName
+
+		'apply the options of the selected preset; update re-applies existing options
+		If mPresets IsNot Nothing
+			Dim mBoolValue As Boolean = False
+			Dim mDblValue As Double
+			For Each preset In mPresets(Parameter("RVTPresets"))
+				Select Case preset.Key
+					'Envelopes
+					Case "ENVELOPE_SELECTOR"
+						mRvtExpDef.EnvelopesReplaceStyle = mPrstsObjMap(preset.Value)
+						'Parts by size
+					Case "REMOVE_PART_BY_SIZE_TOGGLE"
+						'If mPrstsObjMap(preset.Value) = "True" Then mBoolValue = True
+						mRvtExpDef.RemovePartsBySize = CBool(preset.Value)
+					Case "MAXIMUM_DIAGONAL_RVEC"
+						mRvtExpDef.RemovePartsSize = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'holes
+					Case "REMOVE_HOLE_SELECTOR"
+						mRvtExpDef.RemoveHolesStyle = mPrstsObjMap(preset.Value)
+					Case "MAX_DIAMETER_RVEC"
+						mRvtExpDef.RemoveHolesDiameterRange = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'fillets
+					Case "REMOVE_FILLET_SELECTOR"
+						mRvtExpDef.RemoveFilletsStyle = mPrstsObjMap(preset.Value)
+					Case "MAX_RADIUS_RVEC"
+						mRvtExpDef.RemoveFilletsRadiusRange = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'chamfers
+					Case "REMOVE_CHAMFER_SELECTOR"
+						mRvtExpDef.RemoveChamfersStyle = mPrstsObjMap(preset.Value)
+					Case "MAX_DISTANCE_RVEC"
+						mRvtExpDef.RemoveChamfersDistanceRange = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'pockets
+					Case "REMOVE_POCKET_SELECTOR"
+						mRvtExpDef.RemovePocketsStyle = mPrstsObjMap(preset.Value)
+					Case "MAX_LOOP_RVEC"
+						mRvtExpDef.RemovePocketsMaxDepthRange = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'emboss
+					Case "REMOVE_EMBOSS_SELECTOR"
+						mRvtExpDef.RemoveEmbossStyle = mPrstsObjMap(preset.Value)
+					Case "MAX_HEIGHT_RVEC"
+						mRvtExpDef.RemoveEmbossMaxHeightRange = CDbl(Split(preset.Value, " ").FirstOrDefault())'assuming matching units!
+						'tunnels
+					Case "REMOVE_TUNNEL_SELECTOR"
+						mRvtExpDef.RemoveTunnelsStyle = mPrstsObjMap(preset.Value)
+						'Revit Structure
+					Case "RVT_STRUCTURE_SELECTOR"
+						mRvtExpDef.Structure = mPrstsObjMap(preset.Value)
+						'advanced properties
+					Case "FILL_INTERNAL_VOIDS_TOGGLE"
+						mRvtExpDef.RemoveAllInternalVoids = preset.Value
+					Case "REMOVE_INTERNAL_PARTS_TOGGLE"
+						mRvtExpDef.RemoveInternalParts = preset.Value
+					Case "USE_COLOR_OVERRIDE_FROM_SOURCE_TOGGLE"
+						mRvtExpDef.UseColorOverrideFromSourceComponent = preset.Value
+
+				End Select
+
+			Next
+		Else
+			'proceed with default export options if no preset has been selected/available
+			'Input
+			mRvtExpDef.IsAssociativeDesignView = False
+			'Envelopes
+			mRvtExpDef.EnvelopesReplaceStyle = kNoneReplaceStyle
+			'Part Removal
+			mRvtExpDef.RemovePartsBySize = True
+			mRvtExpDef.RemovePartsSize = 10
+			'Feature Removal; for ranges, values are in cm
+			mRvtExpDef.RemoveHolesStyle = kSimplificationRemoveByRange
+			mRvtExpDef.RemoveHolesDiameterRange = 10
+			mRvtExpDef.RemoveChamfersStyle = kSimplificationRemoveAll
+			mRvtExpDef.RemoveFilletsStyle = kSimplificationRemoveAll
+			mRvtExpDef.RemovePocketsStyle = kSimplificationRemoveAll
+			mRvtExpDef.RemoveEmbossStyle = kSimplificationRemoveAll
+			mRvtExpDef.RemoveTunnelsStyle = kSimplificationRemoveAll
+			'Output
+			mRvtExpDef.Structure = kAllInOneElementStructure
+			mRvtExpDef.EnableUpdating = True
+			'Advanced Options
+			mRvtExpDef.UseColorOverrideFromSourceComponent = True
+			mRvtExpDef.RemoveAllInternalVoids = True
+			mRvtExpDef.RemoveInternalParts = True
+		End If
+
+	End If
+
+	'enable iLogicVault commands and validate user's login state
+	Dim iLogicVault As New QuickstartiLogicLibrary.QuickstartiLogicLib
+	If iLogicVault.LoggedIn = False Then
+		Logger.Error("Not Logged In to Vault! - Login first and repeat executing this rule.")
+		'don't forget to close the Progess Bar
+		mProgress.Close
+		Exit Sub
+	End If
+
+	'check the target file's Vault file status as name/value pairs; the file might exist in Vault, even it is not an RevitExport yet 
+	Dim mDocVaultStatus As New Dictionary(Of String, String)
+	mDocVaultStatus = iLogicVault.GetVaultFileStatus(mExpFullName)
+	'evaluate LockState <> Locked or ErrorState contains VaultFileNotFound
+	If mDocVaultStatus.Item("ErrorState") = "None" Then
+		If mDocVaultStatus.Item("CheckOutState") = "CheckedOutByOtherUser" Then
+			Logger.Error("Revit Export file is checked out by other user; rule exits.")
+			'don't forget to close the Progess Bar
+			mProgress.Close
+			Exit Sub
+
+		End If
+		If mDocVaultStatus.Item("LockState") = "Locked" Then
+			Logger.Error("Revit Export file is locked and not available for check-out; rule exits.")
+			'don't forget to close the Progess Bar
+			mProgress.Close
+			Exit Sub
+		End If
+	Else
+		'Logger.Info("ErrorState = " + mDocVaultStatus.Item("ErrorState"))
+	End If
+
+	'clean local working folder; existing files in Vault update a new iteration
+	success = mCleanWfFile(mExpFullName)
+	If success = True Then
+
+		'enable updating requires the file being checked out
+		Dim oControlDef As Inventor.ControlDefinition
+		Try
+			oControlDef = ThisApplication.CommandManager.ControlDefinitions.Item("VaultCheckoutTop")
+			oControlDef.Execute2(True)
+		Catch
+			Logger.Error("Check-out failed; rule exits before the export starts.")
+			'don't forget to close the Progess Bar
+			mProgress.Close
+			Exit Sub
+		End Try
+
+		'Create RevitExport or update the existing; update Progress Bar
+		mProgStep = 2
+		mProgress.Message = "Exporting Revit file... may take several minutes." & " Phase " & mProgStep & " of " & mProgStepsAll
+		mProgress.UpdateProgress
+
+		If mNewExp = True Then
+			mRvtExport = mDoc.ComponentDefinition.RevitExports.Add(mRvtExpDef)
+			If mRvtExport.FullFileName <> mExpFullName Then
+				Logger.Error("Export of Revit file either failed, or the target file name did not match the definition.")
+				'don't forget to close the Progess Bar
+				mProgress.Close
+				Exit Sub
+			End If
+		Else
+			mRvtExport.Update()
+		End If
+
+		'update Progress Bar
+		mProgStep = 3
+		mProgress.Message = "Save and check in... " & " Phase " & mProgStep & " of " & mProgStepsAll
+		mProgress.UpdateProgress
+
+		'Save and Check-in current assembly before Vault attaches the export file
+		Try
+			ThisDoc.Save
+			oControlDef = ThisApplication.CommandManager.ControlDefinitions.Item("VaultCheckinTop")
+			oControlDef.Execute2(True)
+		Catch ex As Exception
+			Logger.Error("Check-In failed; rule exits before export file upload/attach action starts.")
+			'don't forget to close the Progess Bar
+			mProgress.Close
+			Exit Sub
+		End Try
+
+		Dim mPrntPath = ThisDoc.Path
+		Dim mPrntFileName = ThisDoc.FileName(True)
+		Dim mPrntFullFileName As String = ThisDoc.PathAndFileName(True)
+
+		'update Progress Bar
+		mProgStep = 4
+		mProgress.Message = "Upload Revit Export to Vault and attach... " & " Phase " & mProgStep & " of " & mProgStepsAll
+		mProgress.UpdateProgress
+
+		Dim mParentVaultFullFileName = iLogicVault.ConvertLocalPathToVaultPath(mPrntPath) + "/" + mPrntFileName
+		'check the vault status of the attachment's target file; the rule expects that the file exists in vault and is not checked out
+		mDocVaultStatus = iLogicVault.GetVaultFileStatus(mPrntFullFileName)
+		If mDocVaultStatus.Item("ErrorState") = "None" Then
+			If mDocVaultStatus.Item("CheckOutState") <> "NotCheckedOut" Or mDocVaultStatus.Item("LockState") <> "Unlocked" Then
+				Logger.Error("This rule expects the active document being available for checkout to the current user, but must not be checked out.")
+				'don't forget to close the Progess Bar
+				mProgress.Close
+				Exit Sub
+			End If
+		Else
+			Logger.Error("ErrorState = " + mDocVaultStatus.Item("ErrorState") + ". This rule expects that the active document is vaulted!")
+		End If
+
+		'upload file as new or incremental file iteration and attach
+		Dim mVaultPath As String = iLogicVault.ConvertLocalPathToVaultPath(mExpFullName)
+		'attaching the export file will fail if FDU addin is loaded and the current file has an underlay.
+		Dim mLayoutAcadSync As Boolean = mDWGSync()
+		Dim mFDU As Boolean = mActiveFDU()
+
+		If mFDU = False Or (mFDU = True And mLayoutAcadSync = False) Then
+			success = iLogicVault.AddFile(mExpFullName, mVaultPath, True, False, mParentVaultFullFileName)
+			If success = True Then
+				Logger.Info("Revit Export successfully uploaded to Vault; created attachment on parent file.")
+			Else
+				Logger.Error("Failed to add/update Revit file to Vault or to attach it to the parent.")
+			End If
+		Else
+			success = iLogicVault.AddFile(mExpFullName, mVaultPath, True, False)
+			If success = True Then
+				Logger.Info("Revit Export successfully uploaded to Vault.")
+			Else
+				Logger.Error("Failed to add/update Revit file to Vault.")
+			End If
+		End If
+
+		'refresh the Vault Browser
+		oControlDef = ThisApplication.CommandManager.ControlDefinitions.Item("VaultRefresh")
+		oControlDef.Execute2(True)
+
+	End If
+
+	'don't forget to close the Progess Bar
+	mProgress.Close
+
+End Sub
+
+Private Function mCleanWfFile(mFile As String) As Boolean
+	'Delete existing file to avoid overwrite restrictions
+	Dim oFileInfo As New System.IO.FileInfo(mFile)
+	Try
+		If oFileInfo.Exists = True Then
+			If (oFileInfo.Attributes) Then
+				oFileInfo.Attributes = (oFileInfo.Attributes And Not oFileInfo.Attributes.ReadOnly)
+				System.IO.File.Delete(mFile)
+			End If
+		End If
+		Return True
+	Catch
+		Return False
+	End Try
+End Function
+
+
+Private Function mActiveFDU() As Boolean
+	Dim mAddin As Inventor.ApplicationAddIn = ThisApplication.ApplicationAddIns.ItemById("{031C8B05-13C0-4C6C-B8FD-5A19DACCB64F}")
+	If mAddin IsNot Nothing And mAddin.Activated = True Then
+		Return True
+	End If
+	Return False
+End Function
+
+Private Function mDWGSync() As Boolean
+
+	'check for FDU Layout assembly type
+	If ThisDoc.Document.DocumentInterests.HasInterest("factory.filetype.factory_layout_template") = True Then
+		'check for imported DWG with equal name
+		If ThisDoc.Document.ComponentDefinition.ImportedComponents.Count <> 0 Then
+			Dim mImprtCmpts As Inventor.ImportedComponents = ThisDoc.Document.ComponentDefinition.ImportedComponents
+			For Each mImprtCmpt As Inventor.ImportedComponent In mImprtCmpts
+				If mImprtCmpt.Name = ThisDoc.FileName + ".dwg" Then
+					Return True
+				End If
+			Next
+		End If
+	End If
+
+	Return False
+
+End Function
+
+Private Function mReadRvtPresets() As System.Collections.Generic.Dictionary(Of String, System.Collections.Generic.Dictionary(Of String, String))
+
+	Dim PresetFile As String = ThisApplication.FileLocations.PresetsPath + "SimplifyCmd.preset"
+	Dim mRVTPresets As New List(Of String)
+	Dim mXDoc As New XmlDocument
+	'create a name/value map for all simplification options
+
+	Dim mPresetSettings As New System.Collections.Generic.Dictionary(Of String, System.Collections.Generic.Dictionary(Of String, String))
+	If System.IO.File.Exists(PresetFile) = True Then
+		mXDoc.Load(PresetFile)
+		Dim mPresets As System.Xml.XmlNodeList = mXDoc.DocumentElement.SelectNodes("//OUTPUT_TYPE_SELECTOR[@Value='OUTPUT_TYPE_RVT']") '("action[@Result='true']")
+		For Each mNode As System.Xml.XmlNode In mPresets
+			Dim mSettings As New System.Collections.Generic.Dictionary(Of String, String)
+			Dim mParentNode As System.Xml.XmlNode = mNode.ParentNode
+			For Each mChldNode As System.Xml.XmlNode In mParentNode.ChildNodes
+				mSettings.Add(mChldNode.Name, mChldNode.Attributes.ItemOf("Value").Value)
+			Next
+			mPresetSettings.Add(mParentNode.Attributes.ItemOf("Name").Value, mSettings)
+			mRVTPresets.Add(mParentNode.Attributes.ItemOf("Name").Value)
+		Next
+
+		'fill the RVT Presets parameter
+		MultiValue.SetValueOptions(True, 0)
+		MultiValue.List("RVTPresets") = mRVTPresets.ToArray()
+		Return mPresetSettings
+	Else
+		Logger.Error("Preset file for Simplification settings not found.")
+		Return Nothing
+	End If
+
+End Function
+
+Private Function mReadPresetMap() As System.Collections.Generic.Dictionary(Of String, Object)
+	Dim mMap As New System.Collections.Generic.Dictionary(Of String, Object)
+
+	'Replace with envelopes
+	mMap.Add("ENVELOPE_REPLACE_NONE_ITEM", Inventor.EnvelopesReplaceStyleEnum.kNoneReplaceStyle) '118785 No enveloping
+	mMap.Add("ENVELOPE_REPLACE_TOP_ASSEMBLY_ITEM", Inventor.EnvelopesReplaceStyleEnum.kAllInOneEnvelopeReplaceStyle) '118786 Replace entire assembly with an envelope
+	mMap.Add("ENVELOPE_REPLACE_ALL_PARTS_ITEM", Inventor.EnvelopesReplaceStyleEnum.kEachPartReplaceStyle) '118788 Replace each part with an envelope
+	mMap.Add("ENVELOPE_REPLACE_TOP_COMPONENTS_ITEM", Inventor.EnvelopesReplaceStyleEnum.kEachTopLevelComponentReplaceStyle) '118787 Replace each top level components with an envelope
+
+	'Simplification
+	mMap.Add("REMOVE_HOLE_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_HOLE_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_HOLE_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+	mMap.Add("REMOVE_FILLET_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_FILLET_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_FILLET_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+	mMap.Add("REMOVE_CHAMFER_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_CHAMFER_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_CHAMFER_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+	mMap.Add("REMOVE_POCKET_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_POCKET_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_POCKET_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+	mMap.Add("REMOVE_EMBOSS_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_EMBOSS_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_EMBOSS_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+	mMap.Add("REMOVE_TUNNEL_ALL_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll) '118786 Remove all
+	mMap.Add("REMOVE_TUNNEL_RANGE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange) '118787 Remove in range
+	mMap.Add("REMOVE_TUNNEL_NONE_ITEM", Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveNone) '118785 Do not remove any
+
+	'Revit structure
+	mMap.Add("RVT_ALL_IN_ONE", Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure) '119041 Everything structured as a single Revit element
+	mMap.Add("RVT_TOPLEVEL_COMPONENTS", Inventor.RevitExportStructureTypeEnum.kEachTopLevelComponentStructure) '119042 Top level components as Revit elements
+
+	return mMap
+End Function

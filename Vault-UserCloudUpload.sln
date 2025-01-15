@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32510.428
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vault.UserCloudUpload", "Vault-UserCloudUpload\Vault.UserCloudUpload.csproj", "{6B8D6D58-B035-49CE-95D7-ABDEBB0404E1}"
 EndProject
@@ -13,6 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupVault2CUup", "SetupVault2CUup\SetupVault2CUup.vdproj", "{83001161-8D20-4E62-9AA0-8BBB38AA8674}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vault.UserCloudUploadCore", "Vault.UserCloudUploadCore\Vault.UserCloudUploadCore.csproj", "{C0DCB305-8CB4-4F23-B587-07075ABB7906}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{342CDF50-484C-4404-9E87-360D00AD39C6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +42,14 @@ Global
 		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|Any CPU.ActiveCfg = Release
 		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|x64.ActiveCfg = Release
 		{83001161-8D20-4E62-9AA0-8BBB38AA8674}.Release|x64.Build.0 = Release
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Debug|x64.Build.0 = Debug|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Release|x64.ActiveCfg = Release|Any CPU
+		{C0DCB305-8CB4-4F23-B587-07075ABB7906}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
