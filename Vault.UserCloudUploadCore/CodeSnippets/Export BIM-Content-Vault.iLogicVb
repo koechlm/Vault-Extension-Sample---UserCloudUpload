@@ -1,0 +1,175 @@
+﻿AddReference "QuickstartiLogicLibrary.dll"
+'DISCLAIMER:
+'---------------------------------
+'In any case, code, templates, and snippets of this solution are of "work in progress" character.
+'Neither Markus Koechl, nor Autodesk represents that these samples are reliable, accurate, complete, or otherwise valid. 
+'Accordingly, those configuration samples are provided “as is” with no warranty of any kind and you use the applications at your own risk.
+
+Sub Main
+	break
+	'this rule is designed to run in assembly context
+	Dim mAssyDoc As AssemblyDocument = ThisDoc.Document
+	'manage all available BIM content export formats
+	Dim mExpType As String
+	Dim mExpTypes(2) As String
+	mExpTypes(0) = "RFA"
+	mExpTypes(1) = "ADSK"
+	mExpTypes(2) = "IFC"
+	'capture the source file's path
+	Dim mPath As String = ThisDoc.Path
+	'get the list of representations in the Assembly
+	Dim mModelStates As Inventor.ModelStates = mAssyDoc.ComponentDefinition.ModelStates
+	Dim mModelState, mActiveModelState As Inventor.ModelState
+	Dim mLoD As String 'Name of a Level of Design (different from level of detail according BIM standards; it better represents a design phase but also a certain level of details in the design)
+	Dim mExpFrmts() As String 'Name of the export format
+	Dim rCnt As Integer 'index of Export Format Types found in ModelState names
+	'BIM exports take some time; we should keep the user up to date
+	Dim mProgress As Inventor.ProgressBar
+	Dim mExportNum As Integer = 0 'number of export sub tasks; required for Progress Bar
+	Dim mProgStep As Integer = 0 'required for Progress Bar
+	Dim mProgStepsAll As Integer = 4 'required for Progress Bar as base
+
+	'Loop through the list of representations to register all export tasks
+	For Each mModelState In mModelStates
+		If (mModelState.ModelStateType = kSubstituteModelStateType) Then
+			If (mExpTypes.Any(Function(n) mModelState.Name.Contains(n))) Then
+				mExpFrmts = mModelState.Name.Split("_")
+				mExportNum += mExpFrmts.Length - 1
+			End If
+		End If
+	Next
+
+	If mExportNum = 0 Then Exit Sub
+
+	mProgStepsAll = mProgStepsAll + mExportNum 'add the number of subtasks
+	'create progress bar
+	mProgress = ThisApplication.CreateProgressBar(False, mProgStepsAll, "iLogic-Vault BIM Export", False)
+	mProgress.Message = "Preparing to export BIM content..."
+	mProgress.UpdateProgress
+
+	' execute the tasks
+	mActiveModelState = mModelStates.ActiveModelState
+
+	Dim oControlDef As Inventor.ControlDefinition = ThisApplication.CommandManager.ControlDefinitions.Item("VaultCheckoutTop")
+	oControlDef.Execute2(True) 'synchroneous execution; wait for the commands ending before rule exits
+	mProgStep += 1
+
+	For Each mModelState In mModelStates
+		rCnt = 0
+
+		' Inventor recommends to run BIM Exports on substitutes only
+		If (mModelState.ModelStateType = kSubstituteModelStateType) Then
+
+			'	get the name of the substitution part
+			mExpFrmts = mModelState.Name.Split("_")
+			mLoD = mModelState.Name.Split("_")(0)
+
+			If mExpFrmts.Length > 0 Then
+
+				For Each mFormat As String In mExpFrmts
+					If mExpTypes.Any(Function(n) n = mFormat) Then
+
+						'update progress bar
+						mProgress.Message = "Creating each export may take several minutes: " & " Currently Exporting " & mProgStep & " of " & mExportNum
+						mProgress.UpdateProgress
+
+						'run the export task
+						ProcessBIM(mModelState, mPath + "\" + ThisDoc.FileName(False) + "-" + mLoD, mFormat)
+						mProgStep += 1
+
+					End If
+
+				Next
+
+			End If
+
+		End If
+
+	Next
+
+	'update progress bar last time
+	mProgress.Message = "...Finalizing."
+	mProgress.UpdateProgress
+
+	'restore the initial model state
+	mModelStates.Item(mActiveModelState.Name).Activate
+	mProgress.UpdateProgress
+	Try
+		ThisDoc.Save
+		oControlDef = ThisApplication.CommandManager.ControlDefinitions.Item("VaultCheckinTop")
+		oControlDef.Execute2(True)
+		mProgress.UpdateProgress
+	Catch ex As Exception
+		Logger.Error("Check-In failed; likely, the file wasn't checked out.")
+	End Try
+
+	'don't forget to close the Progess Bar
+	mProgress.Close
+
+End Sub
+
+Sub ProcessBIM(mModelState As Inventor.ModelState, mFileName As String, mExpType As String)
+
+	Dim mAssyDoc As Document = ThisDoc.Document
+
+	Dim mBimComp As BIMComponent = mAssyDoc.ComponentDefinition.BIMComponent
+
+	Dim mBimFile As String
+	Dim mSuccess As Boolean
+
+	mModelState.Activate
+
+
+	'enable iLogicVault commands and validate user's login state
+	Dim iLogicVault As New QuickstartiLogicLibrary.QuickstartiLogicLib
+	If iLogicVault.LoggedIn = False
+		Logger.Error("Not Logged In to Vault! - Login first and repeat executing this rule.")
+		Exit Sub
+	End If
+
+	'process the mExpType
+	Select mExpType
+		Case "RFA"
+			mBimFile = mFileName + ".rfa"
+			mSuccess = mCleanWfFile(mBimFile)
+			If mSuccess = True Then
+				mBimComp.ExportBuildingComponent(mBimFile)
+				iLogicVault.AddFile(mBimFile, "$/Libraries/BIM/", True)
+			End If
+		Case "RVT"
+
+		Case "IFC"
+			mBimFile = mFileName + ".ifc"
+			mSuccess = mCleanWfFile(mBimFile)
+			If mSuccess = True Then
+				mBimComp.ExportBuildingComponent(mBimFile)
+				iLogicVault.AddFile(mBimFile, "$/Libraries/BIM/", True)
+			End If
+
+		Case "ADSK"
+			mBimFile = mFileName + ".adsk"
+			mSuccess = mCleanWfFile(mBimFile)
+			If mSuccess = True Then
+				mBimComp.ExportBuildingComponent(mBimFile)
+				iLogicVault.AddFile(mBimFile, "$/Libraries/BIM/", True)
+			End If
+
+	End Select
+
+End Sub
+
+Private Function mCleanWfFile(mFile As String) As Boolean
+	'Delete existing file to avoid overwrite restrictions
+	Dim mFileInfo As New System.IO.FileInfo(mFile)
+	Try
+		If mFileInfo.Exists = True Then
+			If (mFileInfo.Attributes) Then
+				mFileInfo.Attributes = (mFileInfo.Attributes And Not mFileInfo.Attributes.ReadOnly)
+				System.IO.File.Delete(mFile)
+			End If
+		End If
+		Return True
+	Catch
+		Return False
+	End Try
+End Function
