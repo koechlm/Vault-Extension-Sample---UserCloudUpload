@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Vault-UserCloudUpload/Properties/licenses.licx
+/Vault-UserCloudUpload/Properties/licenses.licx.bak
+/Vault.UserCloudUploadCore/Properties/licenses.licx
+/Vault.UserCloudUploadCore/Properties/licenses.licx.bak
